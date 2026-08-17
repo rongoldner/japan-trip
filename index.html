@@ -403,8 +403,14 @@ function renderExpenses(){
 function openModal(html){
   document.getElementById('modal-body').innerHTML = html;
   document.getElementById('modal-overlay').classList.add('open');
+  const mapEl = document.getElementById('map');
+  if(mapEl) mapEl.style.pointerEvents = 'none';
 }
-function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); }
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('open');
+  const mapEl = document.getElementById('map');
+  if(mapEl) mapEl.style.pointerEvents = '';
+}
 document.getElementById('modal-overlay').addEventListener('click', e=>{
   if(e.target.id==='modal-overlay') closeModal();
 });
