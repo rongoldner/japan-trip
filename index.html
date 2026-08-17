@@ -1,0 +1,72 @@
+/**
+ * קוד השרת של אפליקציית הטיול ליפן.
+ * מיקום: Google Sheets > תוספים (Extensions) > Apps Script.
+ * הדביקו את כל הקוד הזה במקום הקוד הריק, שמרו, ופרסמו כ-Web App (ראו README).
+ */
+
+function doGet(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var data = {
+    itinerary: sheetToJson(ss.getSheetByName('Itinerary')),
+    expenses: sheetToJson(ss.getSheetByName('Expenses'))
+  };
+  return jsonResponse(data);
+}
+
+function doPost(e) {
+  var body = JSON.parse(e.postData.contents);
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(body.sheet);
+  if (!sheet) return jsonResponse({success:false, error:'sheet not found: ' + body.sheet});
+
+  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+
+  if (body.action === 'add') {
+    body.data.id = Utilities.getUuid();
+    var row = headers.map(function(h) {
+      return body.data[h] !== undefined ? body.data[h] : '';
+    });
+    sheet.appendRow(row);
+    return jsonResponse({success: true, id: body.data.id});
+  }
+
+  if (body.action === 'update' || body.action === 'delete') {
+    var values = sheet.getDataRange().getValues();
+    var idCol = headers.indexOf('id');
+    for (var i = 1; i < values.length; i++) {
+      if (values[i][idCol] === body.id) {
+        if (body.action === 'delete') {
+          sheet.deleteRow(i + 1);
+        } else {
+          headers.forEach(function(h, colIdx) {
+            if (body.data[h] !== undefined) {
+              sheet.getRange(i + 1, colIdx + 1).setValue(body.data[h]);
+            }
+          });
+        }
+        return jsonResponse({success: true});
+      }
+    }
+    return jsonResponse({success: false, error: 'row not found'});
+  }
+
+  return jsonResponse({success: false, error: 'unknown action'});
+}
+
+function sheetToJson(sheet) {
+  if (!sheet) return [];
+  var data = sheet.getDataRange().getValues();
+  var headers = data.shift();
+  return data
+    .filter(function(row) { return row.join('') !== ''; })
+    .map(function(row) {
+      var obj = {};
+      headers.forEach(function(h, i) { obj[h] = row[i]; });
+      return obj;
+    });
+}
+
+function jsonResponse(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
