@@ -254,7 +254,7 @@ function renderMap(){
     .sort((a,b)=> (a.date+a.time).localeCompare(b.date+b.time));
   if(pts.length===0) return;
   const latlngs = pts.map(p=>[parseFloat(p.lat), parseFloat(p.lng)]);
-  L.polyline(latlngs, {color:'#b23a2e', weight:4, opacity:.85}).addTo(routeLayer);
+  L.polyline(latlngs, {color:'#1b2a4a', weight:4, opacity:.85}).addTo(routeLayer);
   pts.forEach((p,idx)=>{
     L.circleMarker([p.lat,p.lng], {radius:7, color:'#1b2a4a', fillColor:'#c9a227', fillOpacity:1, weight:2})
       .bindPopup(`<b>${p.title||''}</b><br>${p.city||''}`)
