@@ -280,11 +280,21 @@ async function fetchData(){
 }
 
 async function postData(payload){
-  await fetch(SCRIPT_URL, {
-    method:'POST',
-    headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body: JSON.stringify(payload)
-  });
+  try{
+    const res = await fetch(SCRIPT_URL, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if(!json.success){
+      alert('השמירה נכשלה: ' + (json.error || 'שגיאה לא ידועה') + '\nייתכן שצריך לפרסם גרסה חדשה (New version) ב-Apps Script.');
+      return;
+    }
+  }catch(err){
+    alert('לא ניתן להתחבר לשרת. בדקו את כתובת ה-URL בהגדרות, ושהפריסה עדכנית (New version).\n\n' + err.message);
+    return;
+  }
   await fetchData();
 }
 
