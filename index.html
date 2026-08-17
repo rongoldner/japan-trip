@@ -319,7 +319,7 @@ function renderItinerary(){
     html += `<div class="day-group">
       <div class="day-head"><span class="day-num">יום ${idx+1}</span><span class="day-date">${formatDate(date)}</span></div>`;
     items.forEach(i=>{
-      html += `<div class="stop">
+      html += `<div class="stop" data-id="${i.id}" style="cursor:pointer;">
         <div class="stop-time">${i.time||''}</div>
         <div class="stop-body">
           <div class="city">${i.city||''}</div>
@@ -331,6 +331,12 @@ function renderItinerary(){
     html += `</div>`;
   });
   el.innerHTML = html;
+  el.querySelectorAll('.stop').forEach(node=>{
+    node.addEventListener('click', ()=>{
+      const item = tripData.itinerary.find(i=>i.id===node.dataset.id);
+      if(item) openEditStop(item);
+    });
+  });
 }
 
 function formatDate(d){
@@ -377,7 +383,7 @@ function renderExpenses(){
 
   const sorted = [...exp].sort((a,b)=> (b.date||'').localeCompare(a.date||''));
   el.innerHTML = sorted.map(e=>`
-    <div class="exp-row">
+    <div class="exp-row" data-id="${e.id}" style="cursor:pointer;">
       <div class="exp-left">
         <div class="desc">${e.description||''}</div>
         <div class="meta">${formatDate(e.date)} · שולם ע״י ${e.paidBy||'?'} · ${e.category||''}</div>
@@ -385,6 +391,12 @@ function renderExpenses(){
       <div class="exp-amount">${(parseFloat(e.amount)||0).toLocaleString('he-IL')} ¥</div>
     </div>
   `).join('');
+  el.querySelectorAll('.exp-row').forEach(node=>{
+    node.addEventListener('click', ()=>{
+      const item = tripData.expenses.find(e=>e.id===node.dataset.id);
+      if(item) openEditExpense(item);
+    });
+  });
 }
 
 // ---------- Modals ----------
@@ -464,6 +476,84 @@ document.getElementById('fab-add').addEventListener('click', ()=>{
     });
   }
 });
+
+function openEditStop(item){
+  openModal(`
+    <h3>עריכת עצירה</h3>
+    <div class="field"><label>תאריך</label><input id="f-date" type="date" value="${item.date||''}"></div>
+    <div class="field"><label>שעה</label><input id="f-time" type="time" value="${item.time||''}"></div>
+    <div class="field"><label>עיר / אזור</label><input id="f-city" value="${item.city||''}"></div>
+    <div class="field"><label>כותרת</label><input id="f-title" value="${item.title||''}"></div>
+    <div class="field"><label>הערות</label><textarea id="f-notes" rows="2">${item.notes||''}</textarea></div>
+    <div class="field"><label>קואורדינטות</label>
+      <div style="display:flex;gap:8px;">
+        <input id="f-lat" placeholder="lat" value="${item.lat||''}">
+        <input id="f-lng" placeholder="lng" value="${item.lng||''}">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn block" id="update-stop-btn">עדכון</button>
+      <button class="btn secondary block" onclick="closeModal()">ביטול</button>
+    </div>
+    <button class="btn secondary block" id="delete-stop-btn" style="margin-top:10px;color:var(--vermillion);">מחיקה</button>
+  `);
+  document.getElementById('update-stop-btn').addEventListener('click', async ()=>{
+    const data = {
+      date: document.getElementById('f-date').value,
+      time: document.getElementById('f-time').value,
+      city: document.getElementById('f-city').value,
+      title: document.getElementById('f-title').value,
+      notes: document.getElementById('f-notes').value,
+      lat: document.getElementById('f-lat').value,
+      lng: document.getElementById('f-lng').value
+    };
+    if(!data.date || !data.title){ alert('חובה למלא תאריך וכותרת'); return; }
+    closeModal();
+    await postData({sheet:'Itinerary', action:'update', id:item.id, data});
+  });
+  document.getElementById('delete-stop-btn').addEventListener('click', async ()=>{
+    if(!confirm('למחוק את הפריט הזה מהמסלול?')) return;
+    closeModal();
+    await postData({sheet:'Itinerary', action:'delete', id:item.id});
+  });
+}
+
+function openEditExpense(item){
+  openModal(`
+    <h3>עריכת הוצאה</h3>
+    <div class="field"><label>תיאור</label><input id="f-desc" value="${item.description||''}"></div>
+    <div class="field"><label>סכום (ין יפני)</label><input id="f-amount" type="number" inputmode="decimal" value="${item.amount||''}"></div>
+    <div class="field"><label>תאריך</label><input id="f-edate" type="date" value="${item.date||''}"></div>
+    <div class="field"><label>שולם ע״י</label><input id="f-paidby" value="${item.paidBy||''}"></div>
+    <div class="field"><label>קטגוריה</label>
+      <select id="f-cat">
+        ${['אוכל','תחבורה','לינה','אטרקציות','קניות','אחר'].map(c=>`<option ${item.category===c?'selected':''}>${c}</option>`).join('')}
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn block" id="update-exp-btn">עדכון</button>
+      <button class="btn secondary block" onclick="closeModal()">ביטול</button>
+    </div>
+    <button class="btn secondary block" id="delete-exp-btn" style="margin-top:10px;color:var(--vermillion);">מחיקה</button>
+  `);
+  document.getElementById('update-exp-btn').addEventListener('click', async ()=>{
+    const data = {
+      description: document.getElementById('f-desc').value,
+      amount: document.getElementById('f-amount').value,
+      date: document.getElementById('f-edate').value,
+      paidBy: document.getElementById('f-paidby').value,
+      category: document.getElementById('f-cat').value
+    };
+    if(!data.description || !data.amount){ alert('חובה למלא תיאור וסכום'); return; }
+    closeModal();
+    await postData({sheet:'Expenses', action:'update', id:item.id, data});
+  });
+  document.getElementById('delete-exp-btn').addEventListener('click', async ()=>{
+    if(!confirm('למחוק את ההוצאה הזו?')) return;
+    closeModal();
+    await postData({sheet:'Expenses', action:'delete', id:item.id});
+  });
+}
 
 // ---------- Settings ----------
 document.getElementById('script-url-input').value = SCRIPT_URL;
