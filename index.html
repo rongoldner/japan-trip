@@ -435,10 +435,10 @@ document.getElementById('fab-add').addEventListener('click', ()=>{
       <div class="field"><label>כותרת</label><input id="f-title" placeholder="לדוגמה: מקדש סנסו-ג׳י"></div>
       <div class="field"><label>הערות</label><textarea id="f-notes" rows="2"></textarea></div>
       <div class="field"><label>קישור להזמנה (לא חובה)</label><input id="f-link" type="url" placeholder="https://..."></div>
-      <div class="field"><label>קואורדינטות (לא חובה, ל-lat,lng במפה)</label>
-        <div style="display:flex;gap:8px;">
-          <input id="f-lat" placeholder="lat">
-          <input id="f-lng" placeholder="lng">
+      <div class="field"><label>קואורדינטות (לא חובה — מתמלא אוטומטית מהחיפוש למעלה)</label>
+        <div style="display:flex;gap:8px;" dir="ltr">
+          <div style="flex:1;"><label style="font-size:11px;color:var(--muted);">קו רוחב (lat)</label><input id="f-lat" placeholder="35.0116"></div>
+          <div style="flex:1;"><label style="font-size:11px;color:var(--muted);">קו אורך (lng)</label><input id="f-lng" placeholder="135.7681"></div>
         </div>
       </div>
       <div class="modal-actions">
@@ -512,10 +512,10 @@ function openEditStop(item){
     <div class="field"><label>כותרת</label><input id="f-title" value="${item.title||''}"></div>
     <div class="field"><label>הערות</label><textarea id="f-notes" rows="2">${item.notes||''}</textarea></div>
     <div class="field"><label>קישור להזמנה (לא חובה)</label><input id="f-link" type="url" placeholder="https://..." value="${item.link||''}"></div>
-    <div class="field"><label>קואורדינטות</label>
-      <div style="display:flex;gap:8px;">
-        <input id="f-lat" placeholder="lat" value="${item.lat||''}">
-        <input id="f-lng" placeholder="lng" value="${item.lng||''}">
+    <div class="field"><label>קואורדינטות (מתמלא אוטומטית מהחיפוש למעלה)</label>
+      <div style="display:flex;gap:8px;" dir="ltr">
+        <div style="flex:1;"><label style="font-size:11px;color:var(--muted);">קו רוחב (lat)</label><input id="f-lat" placeholder="35.0116" value="${item.lat||''}"></div>
+        <div style="flex:1;"><label style="font-size:11px;color:var(--muted);">קו אורך (lng)</label><input id="f-lng" placeholder="135.7681" value="${item.lng||''}"></div>
       </div>
     </div>
     <div class="modal-actions">
