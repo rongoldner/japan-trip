@@ -325,13 +325,56 @@ async function postData(payload){
     const json = await res.json();
     if(!json.success){
       alert('השמירה נכשלה: ' + (json.error || 'שגיאה לא ידועה'));
-      return;
+      return null;
     }
+    await fetchData();
+    return json;
   }catch(err){
     alert('לא ניתן להתחבר לשרת. בדקו את כתובת ה-URL בהגדרות.\n\n' + err.message);
-    return;
+    return null;
   }
-  await fetchData();
+}
+
+function compressImageToBase64(file){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('קריאת הקובץ נכשלה'));
+    reader.onload = (e)=>{
+      const img = new Image();
+      img.onerror = () => reject(new Error('לא ניתן לפתוח את התמונה'));
+      img.onload = ()=>{
+        const maxDim = 1280;
+        let {width, height} = img;
+        if(width > height && width > maxDim){ height = Math.round(height * maxDim/width); width = maxDim; }
+        else if(height > maxDim){ width = Math.round(width * maxDim/height); height = maxDim; }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.7).split(',')[1]);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function uploadReceipt(expenseId, file){
+  try{
+    const base64 = await compressImageToBase64(file);
+    const res = await fetch(SCRIPT_URL, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({action:'uploadReceipt', id:expenseId, mimeType:'image/jpeg', imageBase64:base64})
+    });
+    const json = await res.json();
+    if(!json.success){
+      alert('ההוצאה נשמרה, אבל העלאת הקבלה נכשלה: ' + (json.error||'שגיאה לא ידועה') + '\nאפשר לנסות לצרף שוב דרך עריכת ההוצאה.');
+      return;
+    }
+    await fetchData();
+  }catch(err){
+    alert('ההוצאה נשמרה, אבל העלאת הקבלה נכשלה (בעיית רשת). אפשר לנסות שוב דרך עריכת ההוצאה.');
+  }
 }
 
 // ---------- Itinerary render ----------
@@ -424,7 +467,7 @@ function renderExpenses(){
   el.innerHTML = sorted.map(e=>`
     <div class="exp-row" data-id="${e.id}" style="cursor:pointer;">
       <div class="exp-left">
-        <div class="desc">${e.description||''}</div>
+        <div class="desc">${e.description||''} ${e.receiptUrl ? '<span title="יש קבלה מצורפת">📎</span>' : ''}</div>
         <div class="meta">${formatDate(e.date)} · שולם ע״י ${e.paidBy||'?'} · ${e.category||''}</div>
       </div>
       <div class="exp-amount">${yenWithUsd(e.amount)}</div>
@@ -513,6 +556,7 @@ document.getElementById('fab-add').addEventListener('click', ()=>{
           <option>אטרקציות</option><option>קניות</option><option>אחר</option>
         </select>
       </div>
+      <div class="field"><label>צילום קבלה (לא חובה)</label><input id="f-receipt" type="file" accept="image/*" capture="environment"></div>
       <div class="modal-actions">
         <button class="btn block" id="save-exp-btn">שמירה</button>
         <button class="btn secondary block" onclick="closeModal()">ביטול</button>
@@ -527,8 +571,12 @@ document.getElementById('fab-add').addEventListener('click', ()=>{
         category: document.getElementById('f-cat').value
       };
       if(!data.description || !data.amount){ alert('חובה למלא תיאור וסכום'); return; }
+      const receiptFile = document.getElementById('f-receipt').files[0];
       closeModal();
-      await postData({sheet:'Expenses', action:'add', data});
+      const result = await postData({sheet:'Expenses', action:'add', data});
+      if(result && result.id && receiptFile){
+        await uploadReceipt(result.id, receiptFile);
+      }
     });
   }
 });
@@ -597,6 +645,12 @@ function openEditExpense(item){
         ${['אוכל','תחבורה','לינה','אטרקציות','קניות','אחר'].map(c=>`<option ${item.category===c?'selected':''}>${c}</option>`).join('')}
       </select>
     </div>
+    <div class="field">
+      <label>קבלה</label>
+      ${item.receiptUrl ? `<div style="margin-bottom:6px;"><a href="${item.receiptUrl}" target="_blank" rel="noopener" style="font-size:13px;color:var(--vermillion);text-decoration:underline;">📎 צפייה בקבלה הקיימת</a></div>` : ''}
+      <input id="f-receipt" type="file" accept="image/*" capture="environment">
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;">בחירת קובץ חדש תחליף את הקבלה הקיימת</div>
+    </div>
     <div class="modal-actions">
       <button class="btn block" id="update-exp-btn">עדכון</button>
       <button class="btn secondary block" onclick="closeModal()">ביטול</button>
@@ -612,8 +666,12 @@ function openEditExpense(item){
       category: document.getElementById('f-cat').value
     };
     if(!data.description || !data.amount){ alert('חובה למלא תיאור וסכום'); return; }
+    const receiptFile = document.getElementById('f-receipt').files[0];
     closeModal();
     await postData({sheet:'Expenses', action:'update', id:item.id, data});
+    if(receiptFile){
+      await uploadReceipt(item.id, receiptFile);
+    }
   });
   document.getElementById('delete-exp-btn').addEventListener('click', async ()=>{
     if(!confirm('למחוק את ההוצאה הזו?')) return;
