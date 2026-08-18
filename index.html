@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -357,23 +358,13 @@ function compressImageToBase64(file){
   });
 }
 
-// *** הפונקציה המתוקנת עם תמיכה מלאה ב-CORS ו-Redirect ***
 async function uploadReceipt(expenseId, file){
   try{
     const base64 = await compressImageToBase64(file);
     const res = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'cors',
-      redirect: 'follow',
-      headers: {
-        'Content-Type': 'text/plain;charset=utf-8'
-      },
-      body: JSON.stringify({
-        action: 'uploadReceipt',
-        id: expenseId,
-        mimeType: 'image/jpeg',
-        imageBase64: base64
-      })
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({action:'uploadReceipt', id:expenseId, mimeType:'image/jpeg', imageBase64:base64})
     });
     const json = await res.json();
     if(!json.success){
@@ -382,7 +373,6 @@ async function uploadReceipt(expenseId, file){
     }
     await fetchData();
   }catch(err){
-    console.error('Error uploading receipt:', err);
     alert('ההוצאה נשמרה, אבל העלאת הקבלה נכשלה (בעיית רשת). אפשר לנסות שוב דרך עריכת ההוצאה.');
   }
 }
@@ -745,10 +735,10 @@ document.getElementById('refresh-btn').addEventListener('click', fetchData);
 // ---------- Boot ----------
 function bootMapWhenReady(triesLeft){
   if(typeof L !== 'undefined'){ initMap(); renderMap(); return; }
-  if(triesLeft <= 0){ initMap(); return; }
+  if(triesLeft <= 0){ initMap(); return; } // shows a friendly "map unavailable" message; itinerary/expenses still work
   setTimeout(()=>bootMapWhenReady(triesLeft-1), 200);
 }
-bootMapWhenReady(20);
+bootMapWhenReady(20); // waits up to ~4 seconds for the async map library
 loadUsdRate().then(()=>{ if(tripData.expenses.length) renderExpenses(); });
 if(SCRIPT_URL){ fetchData(); } else {
   document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
