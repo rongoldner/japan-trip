@@ -277,6 +277,26 @@ function renderMap(){
   map.fitBounds(latlngs, {padding:[24,24]});
 }
 
+let usdRate = 0.0067; // fallback ~150 JPY/USD, replaced by live rate below
+async function loadUsdRate(){
+  try{
+    const cached = JSON.parse(localStorage.getItem('jp_trip_usd_rate') || 'null');
+    const today = new Date().toISOString().slice(0,10);
+    if(cached && cached.date === today){ usdRate = cached.rate; return; }
+    const res = await fetch('https://api.frankfurter.app/latest?from=JPY&to=USD');
+    const json = await res.json();
+    if(json.rates && json.rates.USD){
+      usdRate = json.rates.USD;
+      localStorage.setItem('jp_trip_usd_rate', JSON.stringify({date:today, rate:usdRate}));
+    }
+  }catch(err){ /* keep fallback rate */ }
+}
+function yenWithUsd(amount){
+  const yen = (parseFloat(amount)||0);
+  const usd = yen * usdRate;
+  return `${yen.toLocaleString('he-IL')} ¥ (~$${usd.toLocaleString('en-US',{maximumFractionDigits:0})})`;
+}
+
 // ---------- Fetch ----------
 async function fetchData(){
   if(!SCRIPT_URL) return;
@@ -382,7 +402,7 @@ function renderExpenses(){
     total += amt;
     byPayer[e.paidBy] = (byPayer[e.paidBy]||0) + amt;
   });
-  document.getElementById('total-amount').textContent = total.toLocaleString('he-IL') + ' ¥';
+  document.getElementById('total-amount').textContent = yenWithUsd(total);
 
   const payers = Object.keys(byPayer);
   if(payers.length===2){
@@ -392,12 +412,12 @@ function renderExpenses(){
     if(Math.abs(diff) < 1){
       document.getElementById('balance-line').textContent = 'שני הצדדים שילמו בדיוק חצי-חצי';
     } else if(diff>0){
-      document.getElementById('balance-line').textContent = `${p2} צריך/ה להעביר ל${p1} כ-${Math.round(half).toLocaleString('he-IL')} ¥`;
+      document.getElementById('balance-line').textContent = `${p2} צריך/ה להעביר ל${p1} כ-${yenWithUsd(Math.round(half))}`;
     } else {
-      document.getElementById('balance-line').textContent = `${p1} צריך/ה להעביר ל${p2} כ-${Math.round(half).toLocaleString('he-IL')} ¥`;
+      document.getElementById('balance-line').textContent = `${p1} צריך/ה להעביר ל${p2} כ-${yenWithUsd(Math.round(half))}`;
     }
   } else {
-    document.getElementById('balance-line').textContent = payers.map(p=>`${p}: ${byPayer[p].toLocaleString('he-IL')} ¥`).join(' · ');
+    document.getElementById('balance-line').textContent = payers.map(p=>`${p}: ${yenWithUsd(byPayer[p])}`).join(' · ');
   }
 
   const sorted = [...exp].sort((a,b)=> (b.date||'').localeCompare(a.date||''));
@@ -407,7 +427,7 @@ function renderExpenses(){
         <div class="desc">${e.description||''}</div>
         <div class="meta">${formatDate(e.date)} · שולם ע״י ${e.paidBy||'?'} · ${e.category||''}</div>
       </div>
-      <div class="exp-amount">${(parseFloat(e.amount)||0).toLocaleString('he-IL')} ¥</div>
+      <div class="exp-amount">${yenWithUsd(e.amount)}</div>
     </div>
   `).join('');
   el.querySelectorAll('.exp-row').forEach(node=>{
@@ -661,6 +681,7 @@ function bootMapWhenReady(triesLeft){
   setTimeout(()=>bootMapWhenReady(triesLeft-1), 200);
 }
 bootMapWhenReady(20); // waits up to ~4 seconds for the async map library
+loadUsdRate().then(()=>{ if(tripData.expenses.length) renderExpenses(); });
 if(SCRIPT_URL){ fetchData(); } else {
   document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
   document.querySelector('[data-view="settings"]').classList.add('active');
