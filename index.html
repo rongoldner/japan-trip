@@ -358,22 +358,41 @@ function compressImageToBase64(file){
   });
 }
 
+function uploadReceiptViaForm(expenseId, base64, mimeType){
+  return new Promise((resolve)=>{
+    let iframe = document.getElementById('receipt-frame');
+    if(!iframe){
+      iframe = document.createElement('iframe');
+      iframe.name = 'receipt-frame';
+      iframe.id = 'receipt-frame';
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+    }
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = SCRIPT_URL;
+    form.target = 'receipt-frame';
+    const fields = {action:'uploadReceipt', id:expenseId, mimeType, imageBase64:base64};
+    Object.keys(fields).forEach(k=>{
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = k;
+      input.value = fields[k];
+      form.appendChild(input);
+    });
+    document.body.appendChild(form);
+    form.submit();
+    setTimeout(()=>{ form.remove(); resolve(); }, 300);
+  });
+}
+
 async function uploadReceipt(expenseId, file){
   try{
     const base64 = await compressImageToBase64(file);
-    const res = await fetch(SCRIPT_URL, {
-      method:'POST',
-      headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body: JSON.stringify({action:'uploadReceipt', id:expenseId, mimeType:'image/jpeg', imageBase64:base64})
-    });
-    const json = await res.json();
-    if(!json.success){
-      alert('ההוצאה נשמרה, אבל העלאת הקבלה נכשלה: ' + (json.error||'שגיאה לא ידועה') + '\nאפשר לנסות לצרף שוב דרך עריכת ההוצאה.');
-      return;
-    }
-    await fetchData();
+    await uploadReceiptViaForm(expenseId, base64, 'image/jpeg');
+    setTimeout(()=>fetchData(), 2500); // give the server a moment to finish writing before refreshing
   }catch(err){
-    alert('ההוצאה נשמרה, אבל העלאת הקבלה נכשלה (בעיית רשת). אפשר לנסות שוב דרך עריכת ההוצאה.');
+    alert('לא ניתן היה להעלות את הקבלה: ' + err.message + '\nההוצאה עצמה כן נשמרה — אפשר לנסות לצרף שוב דרך עריכה.');
   }
 }
 
