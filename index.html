@@ -211,7 +211,7 @@
   <div class="modal" id="modal-body"></div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" async onerror="window.__leafletFailed=true"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" onerror="window.__leafletFailed=true"></script>
 <script>
 const STORAGE_KEY = 'jp_trip_script_url';
 let SCRIPT_URL = localStorage.getItem(STORAGE_KEY) || '';
@@ -254,7 +254,7 @@ function renderMap(){
     .sort((a,b)=> (a.date+a.time).localeCompare(b.date+b.time));
   if(pts.length===0) return;
   const latlngs = pts.map(p=>[parseFloat(p.lat), parseFloat(p.lng)]);
-  L.polyline(latlngs, {color:'#1b2a4a', weight:4, opacity:.85}).addTo(routeLayer);
+  L.polyline(latlngs, {color:'#b23a2e', weight:3, opacity:.8, dashArray:'1 8'}).addTo(routeLayer);
   pts.forEach((p,idx)=>{
     L.circleMarker([p.lat,p.lng], {radius:7, color:'#1b2a4a', fillColor:'#c9a227', fillOpacity:1, weight:2})
       .bindPopup(`<b>${p.title||''}</b><br>${p.city||''}`)
@@ -325,7 +325,6 @@ function renderItinerary(){
           <div class="city">${i.city||''}</div>
           <div class="title">${i.title||''}</div>
           ${i.notes ? `<div class="notes">${i.notes}</div>` : ''}
-          ${i.link ? `<a href="${i.link}" target="_blank" rel="noopener" style="font-size:12px;color:var(--vermillion);text-decoration:underline;" onclick="event.stopPropagation();">לצפייה בהזמנה ↗</a>` : ''}
         </div>
       </div>`;
     });
@@ -421,24 +420,15 @@ document.getElementById('fab-add').addEventListener('click', ()=>{
   if(activeView === 'view-itinerary'){
     openModal(`
       <h3>הוספת עצירה למסלול</h3>
-      <div class="field">
-        <label>חיפוש מקום על המפה</label>
-        <div style="display:flex;gap:8px;">
-          <input id="f-search" placeholder="לדוגמה: מקדש פושימי אינרי, קיוטו">
-          <button class="btn small" id="f-search-btn" type="button">חיפוש</button>
-        </div>
-        <div id="f-search-results" style="margin-top:6px;"></div>
-      </div>
       <div class="field"><label>תאריך</label><input id="f-date" type="date"></div>
       <div class="field"><label>שעה</label><input id="f-time" type="time"></div>
       <div class="field"><label>עיר / אזור</label><input id="f-city" placeholder="לדוגמה: טוקיו"></div>
       <div class="field"><label>כותרת</label><input id="f-title" placeholder="לדוגמה: מקדש סנסו-ג׳י"></div>
       <div class="field"><label>הערות</label><textarea id="f-notes" rows="2"></textarea></div>
-      <div class="field"><label>קישור להזמנה (לא חובה)</label><input id="f-link" type="url" placeholder="https://..."></div>
-      <div class="field"><label>קואורדינטות (לא חובה — מתמלא אוטומטית מהחיפוש למעלה)</label>
-        <div style="display:flex;gap:8px;" dir="ltr">
-          <div style="flex:1;"><label style="font-size:11px;color:var(--muted);">קו רוחב (lat)</label><input id="f-lat" placeholder="35.0116"></div>
-          <div style="flex:1;"><label style="font-size:11px;color:var(--muted);">קו אורך (lng)</label><input id="f-lng" placeholder="135.7681"></div>
+      <div class="field"><label>קואורדינטות (לא חובה, ל-lat,lng במפה)</label>
+        <div style="display:flex;gap:8px;">
+          <input id="f-lat" placeholder="lat">
+          <input id="f-lng" placeholder="lng">
         </div>
       </div>
       <div class="modal-actions">
@@ -454,14 +444,12 @@ document.getElementById('fab-add').addEventListener('click', ()=>{
         title: document.getElementById('f-title').value,
         notes: document.getElementById('f-notes').value,
         lat: document.getElementById('f-lat').value,
-        lng: document.getElementById('f-lng').value,
-        link: document.getElementById('f-link').value
+        lng: document.getElementById('f-lng').value
       };
       if(!data.date || !data.title){ alert('חובה למלא תאריך וכותרת'); return; }
       closeModal();
       await postData({sheet:'Itinerary', action:'add', data});
     });
-    wirePlaceSearch();
   } else {
     openModal(`
       <h3>הוספת הוצאה</h3>
@@ -498,24 +486,15 @@ document.getElementById('fab-add').addEventListener('click', ()=>{
 function openEditStop(item){
   openModal(`
     <h3>עריכת עצירה</h3>
-    <div class="field">
-      <label>חיפוש מקום על המפה (לעדכון קואורדינטות)</label>
-      <div style="display:flex;gap:8px;">
-        <input id="f-search" placeholder="לדוגמה: מקדש פושימי אינרי, קיוטו">
-        <button class="btn small" id="f-search-btn" type="button">חיפוש</button>
-      </div>
-      <div id="f-search-results" style="margin-top:6px;"></div>
-    </div>
     <div class="field"><label>תאריך</label><input id="f-date" type="date" value="${item.date||''}"></div>
     <div class="field"><label>שעה</label><input id="f-time" type="time" value="${item.time||''}"></div>
     <div class="field"><label>עיר / אזור</label><input id="f-city" value="${item.city||''}"></div>
     <div class="field"><label>כותרת</label><input id="f-title" value="${item.title||''}"></div>
     <div class="field"><label>הערות</label><textarea id="f-notes" rows="2">${item.notes||''}</textarea></div>
-    <div class="field"><label>קישור להזמנה (לא חובה)</label><input id="f-link" type="url" placeholder="https://..." value="${item.link||''}"></div>
-    <div class="field"><label>קואורדינטות (מתמלא אוטומטית מהחיפוש למעלה)</label>
-      <div style="display:flex;gap:8px;" dir="ltr">
-        <div style="flex:1;"><label style="font-size:11px;color:var(--muted);">קו רוחב (lat)</label><input id="f-lat" placeholder="35.0116" value="${item.lat||''}"></div>
-        <div style="flex:1;"><label style="font-size:11px;color:var(--muted);">קו אורך (lng)</label><input id="f-lng" placeholder="135.7681" value="${item.lng||''}"></div>
+    <div class="field"><label>קואורדינטות</label>
+      <div style="display:flex;gap:8px;">
+        <input id="f-lat" placeholder="lat" value="${item.lat||''}">
+        <input id="f-lng" placeholder="lng" value="${item.lng||''}">
       </div>
     </div>
     <div class="modal-actions">
@@ -532,8 +511,7 @@ function openEditStop(item){
       title: document.getElementById('f-title').value,
       notes: document.getElementById('f-notes').value,
       lat: document.getElementById('f-lat').value,
-      lng: document.getElementById('f-lng').value,
-      link: document.getElementById('f-link').value
+      lng: document.getElementById('f-lng').value
     };
     if(!data.date || !data.title){ alert('חובה למלא תאריך וכותרת'); return; }
     closeModal();
@@ -544,7 +522,6 @@ function openEditStop(item){
     closeModal();
     await postData({sheet:'Itinerary', action:'delete', id:item.id});
   });
-  wirePlaceSearch();
 }
 
 function openEditExpense(item){
@@ -584,46 +561,6 @@ function openEditExpense(item){
   });
 }
 
-function wirePlaceSearch(){
-  const btn = document.getElementById('f-search-btn');
-  const input = document.getElementById('f-search');
-  const results = document.getElementById('f-search-results');
-  if(!btn) return;
-  async function doSearch(){
-    const q = input.value.trim();
-    if(!q) return;
-    results.innerHTML = '<div style="font-size:12px;color:var(--muted);">מחפש…</div>';
-    try{
-      const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + encodeURIComponent(q);
-      const res = await fetch(url, {headers:{'Accept-Language':'he'}});
-      const list = await res.json();
-      if(!list.length){
-        results.innerHTML = '<div style="font-size:12px;color:var(--muted);">לא נמצאו תוצאות.</div>';
-        return;
-      }
-      results.innerHTML = list.map((r,idx)=>`
-        <div class="place-result" data-idx="${idx}" style="padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin-top:4px;font-size:13px;cursor:pointer;background:#fff;">
-          ${r.display_name}
-        </div>
-      `).join('');
-      results.querySelectorAll('.place-result').forEach(node=>{
-        node.addEventListener('click', ()=>{
-          const r = list[node.dataset.idx];
-          document.getElementById('f-lat').value = parseFloat(r.lat).toFixed(6);
-          document.getElementById('f-lng').value = parseFloat(r.lon).toFixed(6);
-          if(!document.getElementById('f-title').value) document.getElementById('f-title').value = q;
-          if(!document.getElementById('f-city').value) document.getElementById('f-city').value = (r.display_name||'').split(',')[1]?.trim() || '';
-          results.innerHTML = `<div style="font-size:12px;color:var(--gold);">✓ מיקום נבחר, הקואורדינטות מולאו</div>`;
-        });
-      });
-    }catch(err){
-      results.innerHTML = '<div style="font-size:12px;color:var(--vermillion);">החיפוש נכשל, נסו שוב.</div>';
-    }
-  }
-  btn.addEventListener('click', doSearch);
-  input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); doSearch(); } });
-}
-
 // ---------- Settings ----------
 document.getElementById('script-url-input').value = SCRIPT_URL;
 document.getElementById('save-url-btn').addEventListener('click', ()=>{
@@ -637,12 +574,7 @@ document.getElementById('save-url-btn').addEventListener('click', ()=>{
 document.getElementById('refresh-btn').addEventListener('click', fetchData);
 
 // ---------- Boot ----------
-function bootMapWhenReady(triesLeft){
-  if(typeof L !== 'undefined'){ initMap(); renderMap(); return; }
-  if(triesLeft <= 0){ initMap(); return; } // shows a friendly "map unavailable" message; itinerary/expenses still work
-  setTimeout(()=>bootMapWhenReady(triesLeft-1), 200);
-}
-bootMapWhenReady(20); // waits up to ~4 seconds for the async map library
+initMap();
 if(SCRIPT_URL){ fetchData(); } else {
   document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
   document.querySelector('[data-view="settings"]').classList.add('active');
