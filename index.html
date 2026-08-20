@@ -1,4 +1,3 @@
-  
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -9,762 +8,709 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --ink:#1c2230;
-    --paper:#f3efe4;
-    --indigo:#1b2a4a;
-    --indigo-2:#233a63;
-    --vermillion:#b23a2e;
-    --gold:#c9a227;
-    --line:#d8d0bd;
-    --card:#fffdf8;
-    --muted:#6b7280;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:var(--paper);
-    color:var(--ink);
-    font-family:'Heebo',sans-serif;
-    -webkit-font-smoothing:antialiased;
-    padding-bottom:84px;
-  }
-  h1,h2,h3{font-family:'Frank Ruhl Libre',serif;margin:0;}
-
-  /* ---- Header ---- */
-  header.app-hero{
-    background:linear-gradient(180deg,var(--indigo) 0%,var(--indigo-2) 100%);
-  color:#f3efe4;
-    padding:28px 20px 22px;
-    position:relative;
-    overflow:hidden;
-  }
-  header.app-hero::before{
-    content:"";
-    position:absolute; inset:0;
-    background-image: repeating-linear-gradient(115deg, rgba(201,162,39,0.07) 0px, rgba(201,162,39,0.07) 2px, transparent 2px, transparent 26px);
-    pointer-events:none;
-  }
-  .eyebrow{
-    font-size:12px; letter-spacing:.14em; text-transform:uppercase;
-    color:var(--gold); font-weight:500; margin-bottom:6px;
-  }
-  header.app-hero h1{ font-size:30px; line-height:1.15; font-weight:700; }
-  .hero-sub{ margin-top:8px; font-size:14px; color:#c9d0e0; }
-  .torii{
-    position:absolute; left:16px; top:14px; width:34px; height:34px; opacity:.5;
-  }
-
-  /* ---- Tabs ---- */
-  nav.tabs{
-    display:flex; position:sticky; top:0; z-index:20;
-    background:var(--paper); border-bottom:1px solid var(--line);
-  }
-  nav.tabs button{
-    flex:1; padding:14px 8px; background:none; border:none; cursor:pointer;
-    font-family:'Heebo',sans-serif; font-size:14px; font-weight:500; color:var(--muted);
-    border-bottom:3px solid transparent;
-  }
-  nav.tabs button.active{ color:var(--vermillion); border-bottom-color:var(--vermillion); }
-
-  main{ padding:16px; max-width:640px; margin:0 auto; }
-  section.view{ display:none; }
-  section.view.active{ display:block; }
-
-  /* ---- Setup screen ---- */
-  .setup-card{
-    background:var(--card); border:1px solid var(--line); border-radius:12px;
-    padding:20px; margin-top:8px;
-  }
-  .setup-card p{ font-size:14px; line-height:1.7; color:#3a3f4b; }
-  .setup-card input{
-    width:100%; padding:12px; border:1px solid var(--line); border-radius:8px;
-    font-family:'Heebo',sans-serif; font-size:14px; margin-top:8px; background:#fff;
-  }
-  .btn{
-    display:inline-block; background:var(--vermillion); color:#fff; border:none;
-    padding:12px 18px; border-radius:8px; font-family:'Heebo',sans-serif; font-size:14px;
-    font-weight:500; cursor:pointer; margin-top:12px;
-  }
-  .btn.secondary{ background:transparent; color:var(--indigo); border:1px solid var(--line); }
-  .btn.small{ padding:8px 12px; font-size:13px; }
-  .btn.block{ display:block; width:100%; text-align:center; }
-
-  /* ---- Map ---- */
-  #map{ height:260px; border-radius:12px; border:1px solid var(--line); margin-bottom:16px; }
-
-  /* ---- Day groups ---- */
-  .day-group{ margin-bottom:22px; }
-  .day-head{
-    display:flex; align-items:baseline; gap:10px; margin-bottom:8px;
-    border-bottom:1px solid var(--line); padding-bottom:6px;
-  }
-  .day-num{
-    font-family:'Frank Ruhl Libre',serif; font-weight:700; font-size:20px; color:var(--vermillion);
-  }
-  .day-date{ font-size:13px; color:var(--muted); }
-  .stop{
-    background:var(--card); border:1px solid var(--line); border-radius:10px;
-    padding:12px 14px; margin-bottom:8px; display:flex; gap:12px; align-items:flex-start;
-  }
-  .stop-time{
-    font-size:13px; color:var(--gold); font-weight:700; min-width:44px;
-  }
-  .stop-body .city{ font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
-  .stop-body .title{ font-size:15px; font-weight:500; margin-top:2px; }
-  .stop-body .notes{ font-size:13px; color:var(--muted); margin-top:4px; }
-
-  /* ---- Expenses ---- */
-  .balance-card{
-    background:var(--indigo); color:#f3efe4; border-radius:12px; padding:18px;
-    margin-bottom:18px; text-align:center;
-  }
-  .balance-card .amount{ font-family:'Frank Ruhl Libre',serif; font-size:26px; margin-top:4px; }
-  .exp-row{
-    display:flex; justify-content:space-between; align-items:center;
-    background:var(--card); border:1px solid var(--line); border-radius:10px;
-    padding:12px 14px; margin-bottom:8px;
-  }
-  .exp-left .desc{ font-size:14px; font-weight:500; }
-  .exp-left .meta{ font-size:12px; color:var(--muted); margin-top:2px; }
-  .exp-amount{ font-family:'Frank Ruhl Libre',serif; font-size:16px; font-weight:700; }
-
-  .fab{
-    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
-    background:var(--vermillion); color:#fff; border:none; border-radius:30px;
-    padding:14px 26px; font-size:14px; font-weight:500; box-shadow:0 6px 18px rgba(178,58,46,.35);
-    cursor:pointer; z-index:30;
-  }
-
-  .modal-overlay{
-    position:fixed; inset:0; background:rgba(27,42,74,.55); z-index:9999;
-    display:none; align-items:flex-end; justify-content:center;
-  }
-  .modal-overlay.open{ display:flex; }
-  .modal{
-    background:var(--paper); width:100%; max-width:640px; border-radius:16px 16px 0 0;
-    padding:20px; max-height:85vh; overflow-y:auto;
-  }
-  .modal h3{ margin-bottom:14px; }
-  .field{ margin-bottom:12px; }
-  .field label{ display:block; font-size:12px; color:var(--muted); margin-bottom:4px; }
-  .field input, .field select, .field textarea{
-    width:100%; padding:10px; border:1px solid var(--line); border-radius:8px;
-    font-family:'Heebo',sans-serif; font-size:14px; background:#fff;
-  }
-  .modal-actions{ display:flex; gap:10px; margin-top:8px; }
-  .empty{ text-align:center; color:var(--muted); font-size:14px; padding:30px 10px; }
-  .sync-note{ font-size:12px; color:var(--muted); text-align:center; margin-top:10px; }
+:root{
+--ink:#1c2230;
+--paper:#f3efe4;
+--indigo:#1b2a4a;
+--indigo-2:#233a63;
+--vermillion:#b23a2e;
+--gold:#c9a227;
+--line:#d8d0bd;
+--card:#fffdf8;
+--muted:#6b7280;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+background:var(--paper);
+color:var(--ink);
+font-family:'Heebo',sans-serif;
+-webkit-font-smoothing:antialiased;
+padding-bottom:84px;
+}
+h1,h2,h3{font-family:'Frank Ruhl Libre',serif;margin:0;}
+/* ---- Header ---- */
+header.app-hero{
+background:linear-gradient(180deg,var(--indigo) 0%,var(--indigo-2) 100%);
+color:#f3efe4;
+padding:28px 20px 22px;
+position:relative;
+overflow:hidden;
+}
+header.app-hero::before{
+content:"";
+position:absolute; inset:0;
+background-image: repeating-linear-gradient(115deg, rgba(201,162,39,0.07) 0px, rgba(201,162,39,0.07) 2px, transparent 2px, transparent 26px);
+pointer-events:none;
+}
+.eyebrow{
+font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+color:var(--gold); font-weight:500; margin-bottom:6px;
+}
+header.app-hero h1{ font-size:30px; line-height:1.15; font-weight:700; }
+.hero-sub{ margin-top:8px; font-size:14px; color:#c9d0e0; }
+.torii{
+position:absolute; left:16px; top:14px; width:34px; height:34px; opacity:.5;
+}
+/* ---- Tabs ---- */
+nav.tabs{
+display:flex; position:sticky; top:0; z-index:20;
+background:var(--paper); border-bottom:1px solid var(--line);
+}
+nav.tabs button{
+flex:1; padding:14px 8px; background:none; border:none; cursor:pointer;
+font-family:'Heebo',sans-serif; font-size:14px; font-weight:500; color:var(--muted);
+border-bottom:3px solid transparent;
+}
+nav.tabs button.active{ color:var(--vermillion); border-bottom-color:var(--vermillion); }
+main{ padding:16px; max-width:640px; margin:0 auto; }
+section.view{ display:none; }
+section.view.active{ display:block; }
+/* ---- Setup screen ---- */
+.setup-card{
+background:var(--card); border:1px solid var(--line); border-radius:12px;
+padding:20px; margin-top:8px;
+}
+.setup-card p{ font-size:14px; line-height:1.7; color:#3a3f4b; }
+.setup-card input{
+width:100%; padding:12px; border:1px solid var(--line); border-radius:8px;
+font-family:'Heebo',sans-serif; font-size:14px; margin-top:8px; background:#fff;
+}
+.btn{
+display:inline-block; background:var(--vermillion); color:#fff; border:none;
+padding:12px 18px; border-radius:8px; font-family:'Heebo',sans-serif; font-size:14px;
+font-weight:500; cursor:pointer; margin-top:12px;
+}
+.btn.secondary{ background:transparent; color:var(--indigo); border:1px solid var(--line); }
+.btn.small{ padding:8px 12px; font-size:13px; }
+.btn.block{ display:block; width:100%; text-align:center; }
+/* ---- Map ---- */
+#map{ height:260px; border-radius:12px; border:1px solid var(--line); margin-bottom:16px; }
+/* ---- Day groups ---- */
+.day-group{ margin-bottom:22px; }
+.day-head{
+display:flex; align-items:baseline; gap:10px; margin-bottom:8px;
+border-bottom:1px solid var(--line); padding-bottom:6px;
+}
+.day-num{
+font-family:'Frank Ruhl Libre',serif; font-weight:700; font-size:20px; color:var(--vermillion);
+}
+.day-date{ font-size:13px; color:var(--muted); }
+.stop{
+background:var(--card); border:1px solid var(--line); border-radius:10px;
+padding:12px 14px; margin-bottom:8px; display:flex; gap:12px; align-items:flex-start;
+}
+.stop-time{
+font-size:13px; color:var(--gold); font-weight:700; min-width:44px;
+}
+.stop-body .city{ font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+.stop-body .title{ font-size:15px; font-weight:500; margin-top:2px; }
+.stop-body .notes{ font-size:13px; color:var(--muted); margin-top:4px; }
+/* ---- Expenses ---- */
+.balance-card{
+background:var(--indigo); color:#f3efe4; border-radius:12px; padding:18px;
+margin-bottom:18px; text-align:center;
+}
+.balance-card .amount{ font-family:'Frank Ruhl Libre',serif; font-size:26px; margin-top:4px; }
+.exp-row{
+display:flex; justify-content:space-between; align-items:center;
+background:var(--card); border:1px solid var(--line); border-radius:10px;
+padding:12px 14px; margin-bottom:8px;
+}
+.exp-left .desc{ font-size:14px; font-weight:500; }
+.exp-left .meta{ font-size:12px; color:var(--muted); margin-top:2px; }
+.exp-amount{ font-family:'Frank Ruhl Libre',serif; font-size:16px; font-weight:700; }
+.fab{
+position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+background:var(--vermillion); color:#fff; border:none; border-radius:30px;
+padding:14px 26px; font-size:14px; font-weight:500; box-shadow:0 6px 18px rgba(178,58,46,.35);
+cursor:pointer; z-index:30;
+}
+.modal-overlay{
+position:fixed; inset:0; background:rgba(27,42,74,.55); z-index:9999;
+display:none; align-items:flex-end; justify-content:center;
+}
+.modal-overlay.open{ display:flex; }
+.modal{
+background:var(--paper); width:100%; max-width:640px; border-radius:16px 16px 0 0;
+padding:20px; max-height:85vh; overflow-y:auto;
+}
+.modal h3{ margin-bottom:14px; }
+.field{ margin-bottom:12px; }
+.field label{ display:block; font-size:12px; color:var(--muted); margin-bottom:4px; }
+.field input, .field select, .field textarea{
+width:100%; padding:10px; border:1px solid var(--line); border-radius:8px;
+font-family:'Heebo',sans-serif; font-size:14px; background:#fff;
+}
+.modal-actions{ display:flex; gap:10px; margin-top:8px; }
+.empty{ text-align:center; color:var(--muted); font-size:14px; padding:30px 10px; }
+.sync-note{ font-size:12px; color:var(--muted); text-align:center; margin-top:10px; }
 </style>
 </head>
 <body>
-
 <header class="app-hero">
-  <svg class="torii" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="10" y="28" width="80" height="7" fill="#c9a227"/>
-    <rect x="18" y="18" width="64" height="6" fill="#c9a227"/>
-    <rect x="26" y="24" width="6" height="60" fill="#c9a227"/>
-    <rect x="68" y="24" width="6" height="60" fill="#c9a227"/>
-  </svg>
-  <div class="eyebrow">טיול זוגי · 23 ימים</div>
-  <h1>יפן, דצמבר 2026</h1>
-  <div class="hero-sub" id="hero-dates">2.12.2026 – 24.12.2026</div>
+<svg class="torii" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="10" y="28" width="80" height="7" fill="#c9a227"/>
+<rect x="18" y="18" width="64" height="6" fill="#c9a227"/>
+<rect x="26" y="24" width="6" height="60" fill="#c9a227"/>
+<rect x="68" y="24" width="6" height="60" fill="#c9a227"/>
+</svg>
+<div class="eyebrow">טיול זוגי · 23 ימים</div>
+<h1>יפן, דצמבר 2026</h1>
+<div class="hero-sub" id="hero-dates">2.12.2026 – 24.12.2026</div>
 </header>
-
 <nav class="tabs">
-  <button data-view="itinerary" class="active">מסלול ומפה</button>
-  <button data-view="expenses">הוצאות</button>
-  <button data-view="settings">הגדרות</button>
+<button data-view="itinerary" class="active">מסלול ומפה</button>
+<button data-view="expenses">הוצאות</button>
+<button data-view="settings">הגדרות</button>
 </nav>
-
 <main>
-
-  <section class="view active" id="view-itinerary">
-    <div id="map"></div>
-    <div id="itinerary-list"><div class="empty">טוען מסלול…</div></div>
-  </section>
-
-  <section class="view" id="view-expenses">
-    <div class="balance-card">
-      <div style="font-size:13px;opacity:.8;">סה״כ הוצאות הטיול</div>
-      <div class="amount" id="total-amount">–</div>
-      <div style="font-size:13px;margin-top:8px;" id="balance-line">–</div>
-    </div>
-    <div id="expenses-list"><div class="empty">טוען הוצאות…</div></div>
-  </section>
-
-  <section class="view" id="view-settings">
-    <div class="setup-card">
-      <h3 style="margin-bottom:10px;">חיבור למקור הנתונים</h3>
-      <p>הזינו כאן את כתובת ה-Web App של Google Apps Script, אחרי שכל אחד מכם פתח את האפליקציה בטלפון שלו והדביק אותה. הכתובת נשמרת רק במכשיר הזה.</p>
-      <input id="script-url-input" type="url" placeholder="https://script.google.com/macros/s/…/exec">
-      <button class="btn" id="save-url-btn">שמירה וחיבור</button>
-      <button class="btn secondary" id="refresh-btn" style="margin-right:8px;">רענון נתונים עכשיו</button>
-    </div>
-    <div class="sync-note">שני הטלפונים שמצביעים לאותה כתובת רואים את אותם הנתונים, כי הם מאוחסנים בגיליון Google Sheets משותף אחד.</div>
-  </section>
-
-</main>
-
-<button class="fab" id="fab-add">＋ הוספה</button>
-
-<div class="modal-overlay" id="modal-overlay">
-  <div class="modal" id="modal-body"></div>
+<section class="view active" id="view-itinerary">
+<div id="map"></div>
+<div id="itinerary-list"><div class="empty">טוען מסלול…</div></div>
+</section>
+<section class="view" id="view-expenses">
+<div class="balance-card">
+<div style="font-size:13px;opacity:.8;">סה״כ הוצאות הטיול</div>
+<div class="amount" id="total-amount">–</div>
+<div style="font-size:13px;margin-top:8px;" id="balance-line">–</div>
 </div>
-
+<div id="expenses-list"><div class="empty">טוען הוצאות…</div></div>
+</section>
+<section class="view" id="view-settings">
+<div class="setup-card">
+<h3 style="margin-bottom:10px;">חיבור למקור הנתונים</h3>
+<p>הזינו כאן את כתובת ה-Web App של Google Apps Script, אחרי שכל אחד מכם פתח את האפליקציה בטלפון שלו והדביק אותה. הכתובת נשמרת רק במכשיר הזה.</p>
+<input id="script-url-input" type="url" placeholder="https://script.google.com/macros/s/…/exec">
+<button class="btn" id="save-url-btn">שמירה וחיבור</button>
+<button class="btn secondary" id="refresh-btn" style="margin-right:8px;">רענון נתונים עכשיו</button>
+</div>
+<div class="sync-note">שני הטלפונים שמצביעים לאותה כתובת רואים את אותם הנתונים, כי הם מאוחסנים בגיליון Google Sheets משותף אחד.</div>
+</section>
+</main>
+<button class="fab" id="fab-add">＋ הוספה</button>
+<div class="modal-overlay" id="modal-overlay">
+<div class="modal" id="modal-body"></div>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" async onerror="window.__leafletFailed=true"></script>
 <script>
 const STORAGE_KEY = 'jp_trip_script_url';
 let SCRIPT_URL = localStorage.getItem(STORAGE_KEY) || '';
 let tripData = { itinerary: [], expenses: [] };
 let map, routeLayer;
-
 // ---------- Tabs ----------
 document.querySelectorAll('nav.tabs button').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('section.view').forEach(v=>v.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('view-'+btn.dataset.view).classList.add('active');
-    document.getElementById('fab-add').style.display = btn.dataset.view==='settings' ? 'none' : 'block';
-    if(btn.dataset.view==='itinerary' && map) setTimeout(()=>map.invalidateSize(), 100);
-  });
+btn.addEventListener('click', ()=>{
+document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+document.querySelectorAll('section.view').forEach(v=>v.classList.remove('active'));
+btn.classList.add('active');
+document.getElementById('view-'+btn.dataset.view).classList.add('active');
+document.getElementById('fab-add').style.display = btn.dataset.view==='settings' ? 'none' : 'block';
+if(btn.dataset.view==='itinerary' && map) setTimeout(()=>map.invalidateSize(), 100);
 });
-
+});
 // ---------- Init map ----------
 function initMap(){
-  if(map) return;
-  if(typeof L === 'undefined' || window.__leafletFailed){
-    document.getElementById('map').outerHTML = '<div style="height:120px;border-radius:12px;border:1px solid var(--line);margin-bottom:16px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;text-align:center;padding:0 20px;">לא ניתן לטעון את המפה (בעיית רשת). המסלול עדיין יוצג למטה.</div>';
-    return;
-  }
-  map = L.map('map').setView([36.2048,138.2529], 5); // Japan center
-  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-    attribution:'Tiles &copy; Esri',
-    maxNativeZoom: 12,
-    maxZoom: 18
-  }).addTo(map);
-  routeLayer = L.layerGroup().addTo(map);
+if(map) return;
+if(typeof L === 'undefined' || window.__leafletFailed){
+document.getElementById('map').outerHTML = '<div style="height:120px;border-radius:12px;border:1px solid var(--line);margin-bottom:16px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;text-align:center;padding:0 20px;">לא ניתן לטעון את המפה (בעיית רשת). המסלול עדיין יוצג למטה.</div>';
+return;
 }
-
+map = L.map('map').setView([36.2048,138.2529], 5); // Japan center
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+attribution:'Tiles &copy; Esri',
+maxNativeZoom: 12,
+maxZoom: 18
+}).addTo(map);
+routeLayer = L.layerGroup().addTo(map);
+}
 function getPointOrder(){
-  const pts = tripData.itinerary
-    .filter(i=>i.lat && i.lng)
-    .sort((a,b)=> (a.date+a.time).localeCompare(b.date+b.time));
-  const orderMap = {};
-  pts.forEach((p,idx)=>{ orderMap[p.id] = idx+1; });
-  return {pts, orderMap};
+const pts = tripData.itinerary
+.filter(i=>i.lat && i.lng)
+.sort((a,b)=> (a.date+a.time).localeCompare(b.date+b.time));
+const orderMap = {};
+pts.forEach((p,idx)=>{ orderMap[p.id] = idx+1; });
+return {pts, orderMap};
 }
-
 function renderMap(){
-  if(!map) return;
-  routeLayer.clearLayers();
-  const {pts} = getPointOrder();
-  if(pts.length===0) return;
-  const latlngs = pts.map(p=>[parseFloat(p.lat), parseFloat(p.lng)]);
-  L.polyline(latlngs, {color:'#1b2a4a', weight:4, opacity:.85}).addTo(routeLayer);
-  pts.forEach((p,idx)=>{
-    const numIcon = L.divIcon({
-      className: '',
-      html: `<div style="width:30px;height:30px;border-radius:50%;background:#1b2a4a;border:3px solid #c9a227;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Frank Ruhl Libre',serif;font-weight:700;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,.35);">${idx+1}</div>`,
-      iconSize: [30,30],
-      iconAnchor: [15,15]
-    });
-    L.marker([p.lat,p.lng], {icon:numIcon})
-      .bindPopup(`<b>${idx+1}. ${p.title||''}</b><br>${p.city||''}`)
-      .addTo(routeLayer);
-  });
-  map.fitBounds(latlngs, {padding:[24,24]});
+if(!map) return;
+routeLayer.clearLayers();
+const {pts} = getPointOrder();
+if(pts.length===0) return;
+const latlngs = pts.map(p=>[parseFloat(p.lat), parseFloat(p.lng)]);
+L.polyline(latlngs, {color:'#1b2a4a', weight:4, opacity:.85}).addTo(routeLayer);
+pts.forEach((p,idx)=>{
+const numIcon = L.divIcon({
+className: '',
+html: `<div style="width:30px;height:30px;border-radius:50%;background:#1b2a4a;border:3px solid #c9a227;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Frank Ruhl Libre',serif;font-weight:700;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,.35);">${idx+1}</div>`,
+iconSize: [30,30],
+iconAnchor: [15,15]
+});
+L.marker([p.lat,p.lng], {icon:numIcon})
+.bindPopup(`<b>${idx+1}. ${p.title||''}</b><br>${p.city||''}`)
+.addTo(routeLayer);
+});
+map.fitBounds(latlngs, {padding:[24,24]});
 }
-
 let usdRate = 0.0067; // fallback ~150 JPY/USD, replaced by live rate below
 async function loadUsdRate(){
-  try{
-    const cached = JSON.parse(localStorage.getItem('jp_trip_usd_rate') || 'null');
-    const today = new Date().toISOString().slice(0,10);
-    if(cached && cached.date === today){ usdRate = cached.rate; return; }
-    const res = await fetch('https://api.frankfurter.app/latest?from=JPY&to=USD');
-    const json = await res.json();
-    if(json.rates && json.rates.USD){
-      usdRate = json.rates.USD;
-      localStorage.setItem('jp_trip_usd_rate', JSON.stringify({date:today, rate:usdRate}));
-    }
-  }catch(err){ /* keep fallback rate */ }
+try{
+const cached = JSON.parse(localStorage.getItem('jp_trip_usd_rate') || 'null');
+const today = new Date().toISOString().slice(0,10);
+if(cached && cached.date === today){ usdRate = cached.rate; return; }
+const res = await fetch('https://api.frankfurter.app/latest?from=JPY&to=USD');
+const json = await res.json();
+if(json.rates && json.rates.USD){
+usdRate = json.rates.USD;
+localStorage.setItem('jp_trip_usd_rate', JSON.stringify({date:today, rate:usdRate}));
+}
+}catch(err){ /* keep fallback rate */ }
 }
 function yenWithUsd(amount){
-  const yen = (parseFloat(amount)||0);
-  const usd = yen * usdRate;
-  return `${yen.toLocaleString('he-IL')} ¥ (~$${usd.toLocaleString('en-US',{maximumFractionDigits:0})})`;
+const yen = (parseFloat(amount)||0);
+const usd = yen * usdRate;
+return `${yen.toLocaleString('he-IL')} ¥ (~$${usd.toLocaleString('en-US',{maximumFractionDigits:0})})`;
 }
-
 // ---------- Fetch ----------
 async function fetchData(){
-  if(!SCRIPT_URL) return;
-  try{
-    const res = await fetch(SCRIPT_URL);
-    const json = await res.json();
-    tripData.itinerary = json.itinerary || [];
-    tripData.expenses = json.expenses || [];
-    renderItinerary();
-    renderExpenses();
-    renderMap();
-  }catch(err){
-    document.getElementById('itinerary-list').innerHTML = '<div class="empty">שגיאה בטעינת הנתונים. בדקו את הכתובת בהגדרות.</div>';
-  }
+if(!SCRIPT_URL) return;
+try{
+const res = await fetch(SCRIPT_URL);
+const json = await res.json();
+tripData.itinerary = json.itinerary || [];
+tripData.expenses = json.expenses || [];
+renderItinerary();
+renderExpenses();
+renderMap();
+}catch(err){
+document.getElementById('itinerary-list').innerHTML = '<div class="empty">שגיאה בטעינת הנתונים. בדקו את הכתובת בהגדרות.</div>';
 }
-
+}
 async function postData(payload){
-  try{
-    const params = new URLSearchParams({
-      action: payload.action,
-      sheet: payload.sheet,
-      data: JSON.stringify(payload.data || {})
-    });
-    if(payload.id) params.set('id', payload.id);
-    const res = await fetch(SCRIPT_URL + '?' + params.toString());
-    const json = await res.json();
-    if(!json.success){
-      alert('השמירה נכשלה: ' + (json.error || 'שגיאה לא ידועה'));
-      return null;
-    }
-    await fetchData();
-    return json;
-  }catch(err){
-    alert('לא ניתן להתחבר לשרת. בדקו את כתובת ה-URL בהגדרות.\n\n' + err.message);
-    return null;
-  }
+try{
+const params = new URLSearchParams({
+action: payload.action,
+sheet: payload.sheet,
+data: JSON.stringify(payload.data || {})
+});
+if(payload.id) params.set('id', payload.id);
+const res = await fetch(SCRIPT_URL + '?' + params.toString());
+const json = await res.json();
+if(!json.success){
+alert('השמירה נכשלה: ' + (json.error || 'שגיאה לא ידועה'));
+return null;
 }
-
+await fetchData();
+return json;
+}catch(err){
+alert('לא ניתן להתחבר לשרת. בדקו את כתובת ה-URL בהגדרות.\n\n' + err.message);
+return null;
+}
+}
 function compressImageToBase64(file){
-  return new Promise((resolve, reject)=>{
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error('קריאת הקובץ נכשלה'));
-    reader.onload = (e)=>{
-      const img = new Image();
-      img.onerror = () => reject(new Error('לא ניתן לפתוח את התמונה'));
-      img.onload = ()=>{
-        const maxDim = 1280;
-        let {width, height} = img;
-        if(width > height && width > maxDim){ height = Math.round(height * maxDim/width); width = maxDim; }
-        else if(height > maxDim){ width = Math.round(width * maxDim/height); height = maxDim; }
-        const canvas = document.createElement('canvas');
-        canvas.width = width; canvas.height = height;
-        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL('image/jpeg', 0.7).split(',')[1]);
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
+return new Promise((resolve, reject)=>{
+const timeout = setTimeout(()=>reject(new Error('עיבוד התמונה נתקע (ייתכן שהקובץ גדול מדי או בפורמט לא נתמך)')), 15000);
+const reader = new FileReader();
+reader.onerror = () => { clearTimeout(timeout); reject(new Error('קריאת הקובץ נכשלה')); };
+reader.onload = (e)=>{
+const img = new Image();
+img.onerror = () => { clearTimeout(timeout); reject(new Error('לא ניתן לפתוח את התמונה (ייתכן פורמט לא נתמך כמו HEIC)')); };
+img.onload = ()=>{
+clearTimeout(timeout);
+const maxDim = 1280;
+let {width, height} = img;
+if(width > height && width > maxDim){ height = Math.round(height * maxDim/width); width = maxDim; }
+else if(height > maxDim){ width = Math.round(width * maxDim/height); height = maxDim; }
+const canvas = document.createElement('canvas');
+canvas.width = width; canvas.height = height;
+canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+resolve(canvas.toDataURL('image/jpeg', 0.7).split(',')[1]);
+};
+img.src = e.target.result;
+};
+reader.readAsDataURL(file);
+});
 }
-
-function uploadReceiptViaForm(expenseId, base64, mimeType){
-  return new Promise((resolve)=>{
-    let iframe = document.getElementById('receipt-frame');
-    if(!iframe){
-      iframe = document.createElement('iframe');
-      iframe.name = 'receipt-frame';
-      iframe.id = 'receipt-frame';
-      iframe.style.display = 'none';
-      document.body.appendChild(iframe);
-    }
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = SCRIPT_URL;
-    form.target = 'receipt-frame';
-    const fields = {action:'uploadReceipt', id:expenseId, mimeType, imageBase64:base64};
-    Object.keys(fields).forEach(k=>{
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = k;
-      input.value = fields[k];
-      form.appendChild(input);
-    });
-    document.body.appendChild(form);
-    form.submit();
-    setTimeout(()=>{ form.remove(); resolve(); }, 300);
-  });
-}
-
 async function uploadReceipt(expenseId, file){
-  try{
-    const base64 = await compressImageToBase64(file);
-    await uploadReceiptViaForm(expenseId, base64, 'image/jpeg');
-    setTimeout(()=>fetchData(), 2500); // give the server a moment to finish writing before refreshing
-  }catch(err){
-    alert('לא ניתן היה להעלות את הקבלה: ' + err.message + '\nההוצאה עצמה כן נשמרה — אפשר לנסות לצרף שוב דרך עריכה.');
-  }
+alert('מעלה קבלה… זה עלול לקחת כמה שניות ולגרום להבהוב עמוד קצר.');
+try{
+const base64 = await compressImageToBase64(file);
+const returnUrl = window.location.href.split('?')[0].split('#')[0];
+const form = document.createElement('form');
+form.method = 'POST';
+form.action = SCRIPT_URL;
+const fields = {action:'uploadReceipt', id:expenseId, mimeType:'image/jpeg', imageBase64:base64, returnUrl};
+Object.keys(fields).forEach(k=>{
+const input = document.createElement('input');
+input.type = 'hidden';
+input.name = k;
+input.value = fields[k];
+form.appendChild(input);
+});
+document.body.appendChild(form);
+form.submit(); // navigates away to Google briefly, then redirects back here automatically
+}catch(err){
+alert('לא ניתן היה להעלות את הקבלה: ' + err.message + '\nההוצאה עצמה כן נשמרה — אפשר לנסות לצרף שוב דרך עריכה.');
 }
-
+}
 // ---------- Itinerary render ----------
 function renderItinerary(){
-  const el = document.getElementById('itinerary-list');
-  if(tripData.itinerary.length===0){
-    el.innerHTML = '<div class="empty">עדיין אין פריטים במסלול. הוסיפו את הראשון עם כפתור ההוספה.</div>';
-    return;
-  }
-  const {orderMap} = getPointOrder();
-  const byDate = {};
-  tripData.itinerary.forEach(i=>{
-    if(!byDate[i.date]) byDate[i.date] = [];
-    byDate[i.date].push(i);
-  });
-  const dates = Object.keys(byDate).sort();
-  let html = '';
-  dates.forEach((date, idx)=>{
-    const items = byDate[date].sort((a,b)=> (a.time||'').localeCompare(b.time||''));
-    html += `<div class="day-group">
-      <div class="day-head"><span class="day-num">יום ${idx+1}</span><span class="day-date">${formatDate(date)}</span></div>`;
-    items.forEach(i=>{
-      const num = orderMap[i.id];
-      const badge = num ? `<div style="min-width:26px;height:26px;border-radius:50%;background:var(--indigo);border:2px solid var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Frank Ruhl Libre',serif;font-weight:700;font-size:13px;flex-shrink:0;">${num}</div>` : '';
-      html += `<div class="stop" data-id="${i.id}" style="cursor:pointer;">
-        ${badge}
-        <div class="stop-time">${i.time||''}</div>
-        <div class="stop-body">
-          <div class="city">${i.city||''}</div>
-          <div class="title">${i.title||''}</div>
-          ${i.notes ? `<div class="notes">${i.notes}</div>` : ''}
-          ${i.link ? `<a href="${i.link}" target="_blank" rel="noopener" style="font-size:12px;color:var(--vermillion);text-decoration:underline;" onclick="event.stopPropagation();">לצפייה בהזמנה ↗</a>` : ''}
-        </div>
-      </div>`;
-    });
-    html += `</div>`;
-  });
-  el.innerHTML = html;
-  el.querySelectorAll('.stop').forEach(node=>{
-    node.addEventListener('click', ()=>{
-      const item = tripData.itinerary.find(i=>i.id===node.dataset.id);
-      if(item) openEditStop(item);
-    });
-  });
+const el = document.getElementById('itinerary-list');
+if(tripData.itinerary.length===0){
+el.innerHTML = '<div class="empty">עדיין אין פריטים במסלול. הוסיפו את הראשון עם כפתור ההוספה.</div>';
+return;
 }
-
+const {orderMap} = getPointOrder();
+const byDate = {};
+tripData.itinerary.forEach(i=>{
+if(!byDate[i.date]) byDate[i.date] = [];
+byDate[i.date].push(i);
+});
+const dates = Object.keys(byDate).sort();
+let html = '';
+dates.forEach((date, idx)=>{
+const items = byDate[date].sort((a,b)=> (a.time||'').localeCompare(b.time||''));
+html += `<div class="day-group">
+<div class="day-head"><span class="day-num">יום ${idx+1}</span><span class="day-date">${formatDate(date)}</span></div>`;
+items.forEach(i=>{
+const num = orderMap[i.id];
+const badge = num ? `<div style="min-width:26px;height:26px;border-radius:50%;background:var(--indigo);border:2px solid var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Frank Ruhl Libre',serif;font-weight:700;font-size:13px;flex-shrink:0;">${num}</div>` : '';
+html += `<div class="stop" data-id="${i.id}" style="cursor:pointer;">
+${badge}
+<div class="stop-time">${i.time||''}</div>
+<div class="stop-body">
+<div class="city">${i.city||''}</div>
+<div class="title">${i.title||''}</div>
+${i.notes ? `<div class="notes">${i.notes}</div>` : ''}
+${i.link ? `<a href="${i.link}" target="_blank" rel="noopener" style="font-size:12px;color:var(--vermillion);text-decoration:underline;" onclick="event.stopPropagation();">לצפייה בהזמנה ↗</a>` : ''}
+</div>
+</div>`;
+});
+html += `</div>`;
+});
+el.innerHTML = html;
+el.querySelectorAll('.stop').forEach(node=>{
+node.addEventListener('click', ()=>{
+const item = tripData.itinerary.find(i=>i.id===node.dataset.id);
+if(item) openEditStop(item);
+});
+});
+}
 function formatDate(d){
-  if(!d) return '';
-  const dt = new Date(d);
-  if(isNaN(dt)) return d;
-  return dt.toLocaleDateString('he-IL', {weekday:'short', day:'numeric', month:'numeric'});
+if(!d) return '';
+const dt = new Date(d);
+if(isNaN(dt)) return d;
+return dt.toLocaleDateString('he-IL', {weekday:'short', day:'numeric', month:'numeric'});
 }
-
 // ---------- Expenses render ----------
 function renderExpenses(){
-  const el = document.getElementById('expenses-list');
-  const exp = tripData.expenses;
-  if(exp.length===0){
-    el.innerHTML = '<div class="empty">עדיין אין הוצאות רשומות.</div>';
-    document.getElementById('total-amount').textContent = '0 ¥';
-    document.getElementById('balance-line').textContent = 'אין נתונים לחישוב איזון';
-    return;
-  }
-  let total = 0;
-  const byPayer = {};
-  exp.forEach(e=>{
-    const amt = parseFloat(e.amount)||0;
-    total += amt;
-    byPayer[e.paidBy] = (byPayer[e.paidBy]||0) + amt;
-  });
-  document.getElementById('total-amount').textContent = yenWithUsd(total);
-
-  const payers = Object.keys(byPayer);
-  if(payers.length===2){
-    const [p1,p2] = payers;
-    const diff = byPayer[p1] - byPayer[p2];
-    const half = Math.abs(diff)/2;
-    if(Math.abs(diff) < 1){
-      document.getElementById('balance-line').textContent = 'שני הצדדים שילמו בדיוק חצי-חצי';
-    } else if(diff>0){
-      document.getElementById('balance-line').textContent = `${p2} צריך/ה להעביר ל${p1} כ-${yenWithUsd(Math.round(half))}`;
-    } else {
-      document.getElementById('balance-line').textContent = `${p1} צריך/ה להעביר ל${p2} כ-${yenWithUsd(Math.round(half))}`;
-    }
-  } else {
-    document.getElementById('balance-line').textContent = payers.map(p=>`${p}: ${yenWithUsd(byPayer[p])}`).join(' · ');
-  }
-
-  const sorted = [...exp].sort((a,b)=> (b.date||'').localeCompare(a.date||''));
-  el.innerHTML = sorted.map(e=>`
-    <div class="exp-row" data-id="${e.id}" style="cursor:pointer;">
-      <div class="exp-left">
-        <div class="desc">${e.description||''} ${e.receiptUrl ? '<span title="יש קבלה מצורפת">📎</span>' : ''}</div>
-        <div class="meta">${formatDate(e.date)} · שולם ע״י ${e.paidBy||'?'} · ${e.category||''}</div>
-      </div>
-      <div class="exp-amount">${yenWithUsd(e.amount)}</div>
-    </div>
-  `).join('');
-  el.querySelectorAll('.exp-row').forEach(node=>{
-    node.addEventListener('click', ()=>{
-      const item = tripData.expenses.find(e=>e.id===node.dataset.id);
-      if(item) openEditExpense(item);
-    });
-  });
+const el = document.getElementById('expenses-list');
+const exp = tripData.expenses;
+if(exp.length===0){
+el.innerHTML = '<div class="empty">עדיין אין הוצאות רשומות.</div>';
+document.getElementById('total-amount').textContent = '0 ¥';
+document.getElementById('balance-line').textContent = 'אין נתונים לחישוב איזון';
+return;
 }
-
+let total = 0;
+const byPayer = {};
+exp.forEach(e=>{
+const amt = parseFloat(e.amount)||0;
+total += amt;
+byPayer[e.paidBy] = (byPayer[e.paidBy]||0) + amt;
+});
+document.getElementById('total-amount').textContent = yenWithUsd(total);
+const payers = Object.keys(byPayer);
+if(payers.length===2){
+const [p1,p2] = payers;
+const diff = byPayer[p1] - byPayer[p2];
+const half = Math.abs(diff)/2;
+if(Math.abs(diff) < 1){
+document.getElementById('balance-line').textContent = 'שני הצדדים שילמו בדיוק חצי-חצי';
+} else if(diff>0){
+document.getElementById('balance-line').textContent = `${p2} צריך/ה להעביר ל${p1} כ-${yenWithUsd(Math.round(half))}`;
+} else {
+document.getElementById('balance-line').textContent = `${p1} צריך/ה להעביר ל${p2} כ-${yenWithUsd(Math.round(half))}`;
+}
+} else {
+document.getElementById('balance-line').textContent = payers.map(p=>`${p}: ${yenWithUsd(byPayer[p])}`).join(' · ');
+}
+const sorted = [...exp].sort((a,b)=> (b.date||'').localeCompare(a.date||''));
+el.innerHTML = sorted.map(e=>`
+<div class="exp-row" data-id="${e.id}" style="cursor:pointer;">
+<div class="exp-left">
+<div class="desc">${e.description||''} ${e.receiptUrl ? '<span title="יש קבלה מצורפת">📎</span>' : ''}</div>
+<div class="meta">${formatDate(e.date)} · שולם ע״י ${e.paidBy||'?'} · ${e.category||''}</div>
+</div>
+<div class="exp-amount">${yenWithUsd(e.amount)}</div>
+</div>
+`).join('');
+el.querySelectorAll('.exp-row').forEach(node=>{
+node.addEventListener('click', ()=>{
+const item = tripData.expenses.find(e=>e.id===node.dataset.id);
+if(item) openEditExpense(item);
+});
+});
+}
 // ---------- Modals ----------
 function openModal(html){
-  document.getElementById('modal-body').innerHTML = html;
-  document.getElementById('modal-overlay').classList.add('open');
-  const mapEl = document.getElementById('map');
-  if(mapEl) mapEl.style.pointerEvents = 'none';
+document.getElementById('modal-body').innerHTML = html;
+document.getElementById('modal-overlay').classList.add('open');
+const mapEl = document.getElementById('map');
+if(mapEl) mapEl.style.pointerEvents = 'none';
 }
 function closeModal(){
-  document.getElementById('modal-overlay').classList.remove('open');
-  const mapEl = document.getElementById('map');
-  if(mapEl) mapEl.style.pointerEvents = '';
+document.getElementById('modal-overlay').classList.remove('open');
+const mapEl = document.getElementById('map');
+if(mapEl) mapEl.style.pointerEvents = '';
 }
 document.getElementById('modal-overlay').addEventListener('click', e=>{
-  if(e.target.id==='modal-overlay') closeModal();
+if(e.target.id==='modal-overlay') closeModal();
 });
-
 document.getElementById('fab-add').addEventListener('click', ()=>{
-  const activeView = document.querySelector('section.view.active').id;
-  if(activeView === 'view-itinerary'){
-    openModal(`
-      <h3>הוספת עצירה למסלול</h3>
-      <div class="field">
-        <label>חיפוש מקום על המפה</label>
-        <div style="display:flex;gap:8px;">
-          <input id="f-search" placeholder="לדוגמה: מקדש פושימי אינרי, קיוטו">
-          <button class="btn small" id="f-search-btn" type="button">חיפוש</button>
-        </div>
-        <div id="f-search-results" style="margin-top:6px;"></div>
-      </div>
-      <div class="field"><label>תאריך</label><input id="f-date" type="date"></div>
-      <div class="field"><label>שעה</label><input id="f-time" type="time"></div>
-      <div class="field"><label>עיר / אזור</label><input id="f-city" placeholder="לדוגמה: טוקיו"></div>
-      <div class="field"><label>כותרת</label><input id="f-title" placeholder="לדוגמה: מקדש סנסו-ג׳י"></div>
-      <div class="field"><label>הערות</label><textarea id="f-notes" rows="2"></textarea></div>
-      <div class="field"><label>קישור להזמנה (לא חובה)</label><input id="f-link" type="url" placeholder="https://..."></div>
-      <div class="field"><label>קואורדינטות (לא חובה — מתמלא אוטומטית מהחיפוש למעלה)</label>
-        <div style="display:flex;gap:8px;" dir="ltr">
-          <div style="flex:1;"><label style="font-size:11px;color:var(--muted);">קו רוחב (lat)</label><input id="f-lat" placeholder="35.0116"></div>
-          <div style="flex:1;"><label style="font-size:11px;color:var(--muted);">קו אורך (lng)</label><input id="f-lng" placeholder="135.7681"></div>
-        </div>
-      </div>
-      <div class="modal-actions">
-        <button class="btn block" id="save-stop-btn">שמירה</button>
-        <button class="btn secondary block" onclick="closeModal()">ביטול</button>
-      </div>
-    `);
-    document.getElementById('save-stop-btn').addEventListener('click', async ()=>{
-      const data = {
-        date: document.getElementById('f-date').value,
-        time: document.getElementById('f-time').value,
-        city: document.getElementById('f-city').value,
-        title: document.getElementById('f-title').value,
-        notes: document.getElementById('f-notes').value,
-        lat: document.getElementById('f-lat').value,
-        lng: document.getElementById('f-lng').value,
-        link: document.getElementById('f-link').value
-      };
-      if(!data.date || !data.title){ alert('חובה למלא תאריך וכותרת'); return; }
-      closeModal();
-      await postData({sheet:'Itinerary', action:'add', data});
-    });
-    wirePlaceSearch();
-  } else {
-    openModal(`
-      <h3>הוספת הוצאה</h3>
-      <div class="field"><label>תיאור</label><input id="f-desc" placeholder="לדוגמה: ארוחת ערב בשיבויה"></div>
-      <div class="field"><label>סכום (ין יפני)</label><input id="f-amount" type="number" inputmode="decimal"></div>
-      <div class="field"><label>תאריך</label><input id="f-edate" type="date"></div>
-      <div class="field"><label>שולם ע״י</label><input id="f-paidby" placeholder="שם"></div>
-      <div class="field"><label>קטגוריה</label>
-        <select id="f-cat">
-          <option>אוכל</option><option>תחבורה</option><option>לינה</option>
-          <option>אטרקציות</option><option>קניות</option><option>אחר</option>
-        </select>
-      </div>
-      <div class="field"><label>צילום קבלה (לא חובה)</label><input id="f-receipt" type="file" accept="image/*" capture="environment"></div>
-      <div class="modal-actions">
-        <button class="btn block" id="save-exp-btn">שמירה</button>
-        <button class="btn secondary block" onclick="closeModal()">ביטול</button>
-      </div>
-    `);
-    document.getElementById('save-exp-btn').addEventListener('click', async ()=>{
-      const data = {
-        description: document.getElementById('f-desc').value,
-        amount: document.getElementById('f-amount').value,
-        date: document.getElementById('f-edate').value,
-        paidBy: document.getElementById('f-paidby').value,
-        category: document.getElementById('f-cat').value
-      };
-      if(!data.description || !data.amount){ alert('חובה למלא תיאור וסכום'); return; }
-      const receiptFile = document.getElementById('f-receipt').files[0];
-      closeModal();
-      const result = await postData({sheet:'Expenses', action:'add', data});
-      if(result && result.id && receiptFile){
-        await uploadReceipt(result.id, receiptFile);
-      }
-    });
-  }
+const activeView = document.querySelector('section.view.active').id;
+if(activeView === 'view-itinerary'){
+openModal(`
+<h3>הוספת עצירה למסלול</h3>
+<div class="field">
+<label>חיפוש מקום על המפה</label>
+<div style="display:flex;gap:8px;">
+<input id="f-search" placeholder="לדוגמה: מקדש פושימי אינרי, קיוטו">
+<button class="btn small" id="f-search-btn" type="button">חיפוש</button>
+</div>
+<div id="f-search-results" style="margin-top:6px;"></div>
+</div>
+<div class="field"><label>תאריך</label><input id="f-date" type="date"></div>
+<div class="field"><label>שעה</label><input id="f-time" type="time"></div>
+<div class="field"><label>עיר / אזור</label><input id="f-city" placeholder="לדוגמה: טוקיו"></div>
+<div class="field"><label>כותרת</label><input id="f-title" placeholder="לדוגמה: מקדש סנסו-ג׳י"></div>
+<div class="field"><label>הערות</label><textarea id="f-notes" rows="2"></textarea></div>
+<div class="field"><label>קישור להזמנה (לא חובה)</label><input id="f-link" type="url" placeholder="https://..."></div>
+<div class="field"><label>קואורדינטות (לא חובה — מתמלא אוטומטית מהחיפוש למעלה)</label>
+<div style="display:flex;gap:8px;" dir="ltr">
+<div style="flex:1;"><label style="font-size:11px;color:var(--muted);">קו רוחב (lat)</label><input id="f-lat" placeholder="35.0116"></div>
+<div style="flex:1;"><label style="font-size:11px;color:var(--muted);">קו אורך (lng)</label><input id="f-lng" placeholder="135.7681"></div>
+</div>
+</div>
+<div class="modal-actions">
+<button class="btn block" id="save-stop-btn">שמירה</button>
+<button class="btn secondary block" onclick="closeModal()">ביטול</button>
+</div>
+`);
+document.getElementById('save-stop-btn').addEventListener('click', async ()=>{
+const data = {
+date: document.getElementById('f-date').value,
+time: document.getElementById('f-time').value,
+city: document.getElementById('f-city').value,
+title: document.getElementById('f-title').value,
+notes: document.getElementById('f-notes').value,
+lat: document.getElementById('f-lat').value,
+lng: document.getElementById('f-lng').value,
+link: document.getElementById('f-link').value
+};
+if(!data.date || !data.title){ alert('חובה למלא תאריך וכותרת'); return; }
+closeModal();
+await postData({sheet:'Itinerary', action:'add', data});
 });
-
+wirePlaceSearch();
+} else {
+openModal(`
+<h3>הוספת הוצאה</h3>
+<div class="field"><label>תיאור</label><input id="f-desc" placeholder="לדוגמה: ארוחת ערב בשיבויה"></div>
+<div class="field"><label>סכום (ין יפני)</label><input id="f-amount" type="number" inputmode="decimal"></div>
+<div class="field"><label>תאריך</label><input id="f-edate" type="date"></div>
+<div class="field"><label>שולם ע״י</label><input id="f-paidby" placeholder="שם"></div>
+<div class="field"><label>קטגוריה</label>
+<select id="f-cat">
+<option>אוכל</option><option>תחבורה</option><option>לינה</option>
+<option>אטרקציות</option><option>קניות</option><option>אחר</option>
+</select>
+</div>
+<div class="field"><label>צילום קבלה (לא חובה)</label><input id="f-receipt" type="file" accept="image/*" capture="environment"></div>
+<div class="modal-actions">
+<button class="btn block" id="save-exp-btn">שמירה</button>
+<button class="btn secondary block" onclick="closeModal()">ביטול</button>
+</div>
+`);
+document.getElementById('save-exp-btn').addEventListener('click', async ()=>{
+const data = {
+description: document.getElementById('f-desc').value,
+amount: document.getElementById('f-amount').value,
+date: document.getElementById('f-edate').value,
+paidBy: document.getElementById('f-paidby').value,
+category: document.getElementById('f-cat').value
+};
+if(!data.description || !data.amount){ alert('חובה למלא תיאור וסכום'); return; }
+const receiptFile = document.getElementById('f-receipt').files[0];
+closeModal();
+const result = await postData({sheet:'Expenses', action:'add', data});
+if(result && result.id && receiptFile){
+await uploadReceipt(result.id, receiptFile);
+}
+});
+}
+});
 function openEditStop(item){
-  openModal(`
-    <h3>עריכת עצירה</h3>
-    <div class="field">
-      <label>חיפוש מקום על המפה (לעדכון קואורדינטות)</label>
-      <div style="display:flex;gap:8px;">
-        <input id="f-search" placeholder="לדוגמה: מקדש פושימי אינרי, קיוטו">
-        <button class="btn small" id="f-search-btn" type="button">חיפוש</button>
-      </div>
-      <div id="f-search-results" style="margin-top:6px;"></div>
-    </div>
-    <div class="field"><label>תאריך</label><input id="f-date" type="date" value="${item.date||''}"></div>
-    <div class="field"><label>שעה</label><input id="f-time" type="time" value="${item.time||''}"></div>
-    <div class="field"><label>עיר / אזור</label><input id="f-city" value="${item.city||''}"></div>
-    <div class="field"><label>כותרת</label><input id="f-title" value="${item.title||''}"></div>
-    <div class="field"><label>הערות</label><textarea id="f-notes" rows="2">${item.notes||''}</textarea></div>
-    <div class="field"><label>קישור להזמנה (לא חובה)</label><input id="f-link" type="url" placeholder="https://..." value="${item.link||''}"></div>
-    <div class="field"><label>קואורדינטות (מתמלא אוטומטית מהחיפוש למעלה)</label>
-      <div style="display:flex;gap:8px;" dir="ltr">
-        <div style="flex:1;"><label style="font-size:11px;color:var(--muted);">קו רוחב (lat)</label><input id="f-lat" placeholder="35.0116" value="${item.lat||''}"></div>
-        <div style="flex:1;"><label style="font-size:11px;color:var(--muted);">קו אורך (lng)</label><input id="f-lng" placeholder="135.7681" value="${item.lng||''}"></div>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn block" id="update-stop-btn">עדכון</button>
-      <button class="btn secondary block" onclick="closeModal()">ביטול</button>
-    </div>
-    <button class="btn secondary block" id="delete-stop-btn" style="margin-top:10px;color:var(--vermillion);">מחיקה</button>
-  `);
-  document.getElementById('update-stop-btn').addEventListener('click', async ()=>{
-    const data = {
-      date: document.getElementById('f-date').value,
-      time: document.getElementById('f-time').value,
-      city: document.getElementById('f-city').value,
-      title: document.getElementById('f-title').value,
-      notes: document.getElementById('f-notes').value,
-      lat: document.getElementById('f-lat').value,
-      lng: document.getElementById('f-lng').value,
-      link: document.getElementById('f-link').value
-    };
-    if(!data.date || !data.title){ alert('חובה למלא תאריך וכותרת'); return; }
-    closeModal();
-    await postData({sheet:'Itinerary', action:'update', id:item.id, data});
-  });
-  document.getElementById('delete-stop-btn').addEventListener('click', async ()=>{
-    if(!confirm('למחוק את הפריט הזה מהמסלול?')) return;
-    closeModal();
-    await postData({sheet:'Itinerary', action:'delete', id:item.id});
-  });
-  wirePlaceSearch();
+openModal(`
+<h3>עריכת עצירה</h3>
+<div class="field">
+<label>חיפוש מקום על המפה (לעדכון קואורדינטות)</label>
+<div style="display:flex;gap:8px;">
+<input id="f-search" placeholder="לדוגמה: מקדש פושימי אינרי, קיוטו">
+<button class="btn small" id="f-search-btn" type="button">חיפוש</button>
+</div>
+<div id="f-search-results" style="margin-top:6px;"></div>
+</div>
+<div class="field"><label>תאריך</label><input id="f-date" type="date" value="${item.date||''}"></div>
+<div class="field"><label>שעה</label><input id="f-time" type="time" value="${item.time||''}"></div>
+<div class="field"><label>עיר / אזור</label><input id="f-city" value="${item.city||''}"></div>
+<div class="field"><label>כותרת</label><input id="f-title" value="${item.title||''}"></div>
+<div class="field"><label>הערות</label><textarea id="f-notes" rows="2">${item.notes||''}</textarea></div>
+<div class="field"><label>קישור להזמנה (לא חובה)</label><input id="f-link" type="url" placeholder="https://..." value="${item.link||''}"></div>
+<div class="field"><label>קואורדינטות (מתמלא אוטומטית מהחיפוש למעלה)</label>
+<div style="display:flex;gap:8px;" dir="ltr">
+<div style="flex:1;"><label style="font-size:11px;color:var(--muted);">קו רוחב (lat)</label><input id="f-lat" placeholder="35.0116" value="${item.lat||''}"></div>
+<div style="flex:1;"><label style="font-size:11px;color:var(--muted);">קו אורך (lng)</label><input id="f-lng" placeholder="135.7681" value="${item.lng||''}"></div>
+</div>
+</div>
+<div class="modal-actions">
+<button class="btn block" id="update-stop-btn">עדכון</button>
+<button class="btn secondary block" onclick="closeModal()">ביטול</button>
+</div>
+<button class="btn secondary block" id="delete-stop-btn" style="margin-top:10px;color:var(--vermillion);">מחיקה</button>
+`);
+document.getElementById('update-stop-btn').addEventListener('click', async ()=>{
+const data = {
+date: document.getElementById('f-date').value,
+time: document.getElementById('f-time').value,
+city: document.getElementById('f-city').value,
+title: document.getElementById('f-title').value,
+notes: document.getElementById('f-notes').value,
+lat: document.getElementById('f-lat').value,
+lng: document.getElementById('f-lng').value,
+link: document.getElementById('f-link').value
+};
+if(!data.date || !data.title){ alert('חובה למלא תאריך וכותרת'); return; }
+closeModal();
+await postData({sheet:'Itinerary', action:'update', id:item.id, data});
+});
+document.getElementById('delete-stop-btn').addEventListener('click', async ()=>{
+if(!confirm('למחוק את הפריט הזה מהמסלול?')) return;
+closeModal();
+await postData({sheet:'Itinerary', action:'delete', id:item.id});
+});
+wirePlaceSearch();
 }
-
 function openEditExpense(item){
-  openModal(`
-    <h3>עריכת הוצאה</h3>
-    <div class="field"><label>תיאור</label><input id="f-desc" value="${item.description||''}"></div>
-    <div class="field"><label>סכום (ין יפני)</label><input id="f-amount" type="number" inputmode="decimal" value="${item.amount||''}"></div>
-    <div class="field"><label>תאריך</label><input id="f-edate" type="date" value="${item.date||''}"></div>
-    <div class="field"><label>שולם ע״י</label><input id="f-paidby" value="${item.paidBy||''}"></div>
-    <div class="field"><label>קטגוריה</label>
-      <select id="f-cat">
-        ${['אוכל','תחבורה','לינה','אטרקציות','קניות','אחר'].map(c=>`<option ${item.category===c?'selected':''}>${c}</option>`).join('')}
-      </select>
-    </div>
-    <div class="field">
-      <label>קבלה</label>
-      ${item.receiptUrl ? `<div style="margin-bottom:6px;"><a href="${item.receiptUrl}" target="_blank" rel="noopener" style="font-size:13px;color:var(--vermillion);text-decoration:underline;">📎 צפייה בקבלה הקיימת</a></div>` : ''}
-      <input id="f-receipt" type="file" accept="image/*" capture="environment">
-      <div style="font-size:11px;color:var(--muted);margin-top:4px;">בחירת קובץ חדש תחליף את הקבלה הקיימת</div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn block" id="update-exp-btn">עדכון</button>
-      <button class="btn secondary block" onclick="closeModal()">ביטול</button>
-    </div>
-    <button class="btn secondary block" id="delete-exp-btn" style="margin-top:10px;color:var(--vermillion);">מחיקה</button>
-  `);
-  document.getElementById('update-exp-btn').addEventListener('click', async ()=>{
-    const data = {
-      description: document.getElementById('f-desc').value,
-      amount: document.getElementById('f-amount').value,
-      date: document.getElementById('f-edate').value,
-      paidBy: document.getElementById('f-paidby').value,
-      category: document.getElementById('f-cat').value
-    };
-    if(!data.description || !data.amount){ alert('חובה למלא תיאור וסכום'); return; }
-    const receiptFile = document.getElementById('f-receipt').files[0];
-    closeModal();
-    await postData({sheet:'Expenses', action:'update', id:item.id, data});
-    if(receiptFile){
-      await uploadReceipt(item.id, receiptFile);
-    }
-  });
-  document.getElementById('delete-exp-btn').addEventListener('click', async ()=>{
-    if(!confirm('למחוק את ההוצאה הזו?')) return;
-    closeModal();
-    await postData({sheet:'Expenses', action:'delete', id:item.id});
-  });
+openModal(`
+<h3>עריכת הוצאה</h3>
+<div class="field"><label>תיאור</label><input id="f-desc" value="${item.description||''}"></div>
+<div class="field"><label>סכום (ין יפני)</label><input id="f-amount" type="number" inputmode="decimal" value="${item.amount||''}"></div>
+<div class="field"><label>תאריך</label><input id="f-edate" type="date" value="${item.date||''}"></div>
+<div class="field"><label>שולם ע״י</label><input id="f-paidby" value="${item.paidBy||''}"></div>
+<div class="field"><label>קטגוריה</label>
+<select id="f-cat">
+${['אוכל','תחבורה','לינה','אטרקציות','קניות','אחר'].map(c=>`<option ${item.category===c?'selected':''}>${c}</option>`).join('')}
+</select>
+</div>
+<div class="field">
+<label>קבלה</label>
+${item.receiptUrl ? `<div style="margin-bottom:6px;"><a href="${item.receiptUrl}" target="_blank" rel="noopener" style="font-size:13px;color:var(--vermillion);text-decoration:underline;">📎 צפייה בקבלה הקיימת</a></div>` : ''}
+<input id="f-receipt" type="file" accept="image/*" capture="environment">
+<div style="font-size:11px;color:var(--muted);margin-top:4px;">בחירת קובץ חדש תחליף את הקבלה הקיימת</div>
+</div>
+<div class="modal-actions">
+<button class="btn block" id="update-exp-btn">עדכון</button>
+<button class="btn secondary block" onclick="closeModal()">ביטול</button>
+</div>
+<button class="btn secondary block" id="delete-exp-btn" style="margin-top:10px;color:var(--vermillion);">מחיקה</button>
+`);
+document.getElementById('update-exp-btn').addEventListener('click', async ()=>{
+const data = {
+description: document.getElementById('f-desc').value,
+amount: document.getElementById('f-amount').value,
+date: document.getElementById('f-edate').value,
+paidBy: document.getElementById('f-paidby').value,
+category: document.getElementById('f-cat').value
+};
+if(!data.description || !data.amount){ alert('חובה למלא תיאור וסכום'); return; }
+const receiptFile = document.getElementById('f-receipt').files[0];
+closeModal();
+await postData({sheet:'Expenses', action:'update', id:item.id, data});
+if(receiptFile){
+await uploadReceipt(item.id, receiptFile);
 }
-
+});
+document.getElementById('delete-exp-btn').addEventListener('click', async ()=>{
+if(!confirm('למחוק את ההוצאה הזו?')) return;
+closeModal();
+await postData({sheet:'Expenses', action:'delete', id:item.id});
+});
+}
 function wirePlaceSearch(){
-  const btn = document.getElementById('f-search-btn');
-  const input = document.getElementById('f-search');
-  const results = document.getElementById('f-search-results');
-  if(!btn) return;
-  async function doSearch(){
-    const q = input.value.trim();
-    if(!q) return;
-    results.innerHTML = '<div style="font-size:12px;color:var(--muted);">מחפש…</div>';
-    try{
-      const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + encodeURIComponent(q);
-      const res = await fetch(url, {headers:{'Accept-Language':'he'}});
-      const list = await res.json();
-      if(!list.length){
-        results.innerHTML = '<div style="font-size:12px;color:var(--muted);">לא נמצאו תוצאות.</div>';
-        return;
-      }
-      results.innerHTML = list.map((r,idx)=>`
-        <div class="place-result" data-idx="${idx}" style="padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin-top:4px;font-size:13px;cursor:pointer;background:#fff;">
-          ${r.display_name}
-        </div>
-      `).join('');
-      results.querySelectorAll('.place-result').forEach(node=>{
-        node.addEventListener('click', ()=>{
-          const r = list[node.dataset.idx];
-          document.getElementById('f-lat').value = parseFloat(r.lat).toFixed(6);
-          document.getElementById('f-lng').value = parseFloat(r.lon).toFixed(6);
-          if(!document.getElementById('f-title').value) document.getElementById('f-title').value = q;
-          if(!document.getElementById('f-city').value) document.getElementById('f-city').value = (r.display_name||'').split(',')[1]?.trim() || '';
-          results.innerHTML = `<div style="font-size:12px;color:var(--gold);">✓ מיקום נבחר, הקואורדינטות מולאו</div>`;
-        });
-      });
-    }catch(err){
-      results.innerHTML = '<div style="font-size:12px;color:var(--vermillion);">החיפוש נכשל, נסו שוב.</div>';
-    }
-  }
-  btn.addEventListener('click', doSearch);
-  input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); doSearch(); } });
+const btn = document.getElementById('f-search-btn');
+const input = document.getElementById('f-search');
+const results = document.getElementById('f-search-results');
+if(!btn) return;
+async function doSearch(){
+const q = input.value.trim();
+if(!q) return;
+results.innerHTML = '<div style="font-size:12px;color:var(--muted);">מחפש…</div>';
+try{
+const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + encodeURIComponent(q);
+const res = await fetch(url, {headers:{'Accept-Language':'he'}});
+const list = await res.json();
+if(!list.length){
+results.innerHTML = '<div style="font-size:12px;color:var(--muted);">לא נמצאו תוצאות.</div>';
+return;
 }
-
+results.innerHTML = list.map((r,idx)=>`
+<div class="place-result" data-idx="${idx}" style="padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin-top:4px;font-size:13px;cursor:pointer;background:#fff;">
+${r.display_name}
+</div>
+`).join('');
+results.querySelectorAll('.place-result').forEach(node=>{
+node.addEventListener('click', ()=>{
+const r = list[node.dataset.idx];
+document.getElementById('f-lat').value = parseFloat(r.lat).toFixed(6);
+document.getElementById('f-lng').value = parseFloat(r.lon).toFixed(6);
+if(!document.getElementById('f-title').value) document.getElementById('f-title').value = q;
+if(!document.getElementById('f-city').value) document.getElementById('f-city').value = (r.display_name||'').split(',')[1]?.trim() || '';
+results.innerHTML = `<div style="font-size:12px;color:var(--gold);">✓ מיקום נבחר, הקואורדינטות מולאו</div>`;
+});
+});
+}catch(err){
+results.innerHTML = '<div style="font-size:12px;color:var(--vermillion);">החיפוש נכשל, נסו שוב.</div>';
+}
+}
+btn.addEventListener('click', doSearch);
+input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); doSearch(); } });
+}
 // ---------- Settings ----------
 document.getElementById('script-url-input').value = SCRIPT_URL;
 document.getElementById('save-url-btn').addEventListener('click', ()=>{
-  const v = document.getElementById('script-url-input').value.trim();
-  if(!v){ alert('הדביקו כתובת תקינה'); return; }
-  SCRIPT_URL = v;
-  localStorage.setItem(STORAGE_KEY, v);
-  fetchData();
-  alert('חובר בהצלחה. מרעננים נתונים…');
+const v = document.getElementById('script-url-input').value.trim();
+if(!v){ alert('הדביקו כתובת תקינה'); return; }
+SCRIPT_URL = v;
+localStorage.setItem(STORAGE_KEY, v);
+fetchData();
+alert('חובר בהצלחה. מרעננים נתונים…');
 });
 document.getElementById('refresh-btn').addEventListener('click', fetchData);
-
 // ---------- Boot ----------
 function bootMapWhenReady(triesLeft){
-  if(typeof L !== 'undefined'){ initMap(); renderMap(); return; }
-  if(triesLeft <= 0){ initMap(); return; } // shows a friendly "map unavailable" message; itinerary/expenses still work
-  setTimeout(()=>bootMapWhenReady(triesLeft-1), 200);
+if(typeof L !== 'undefined'){ initMap(); renderMap(); return; }
+if(triesLeft <= 0){ initMap(); return; } // shows a friendly "map unavailable" message; itinerary/expenses still work
+setTimeout(()=>bootMapWhenReady(triesLeft-1), 200);
 }
 bootMapWhenReady(20); // waits up to ~4 seconds for the async map library
 loadUsdRate().then(()=>{ if(tripData.expenses.length) renderExpenses(); });
 if(SCRIPT_URL){ fetchData(); } else {
-  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
-  document.querySelector('[data-view="settings"]').classList.add('active');
-  document.getElementById('view-settings').classList.add('active');
-  document.getElementById('view-itinerary').classList.remove('active');
-  document.getElementById('fab-add').style.display='none';
+document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+document.querySelector('[data-view="settings"]').classList.add('active');
+document.getElementById('view-settings').classList.add('active');
+document.getElementById('view-itinerary').classList.remove('active');
+document.getElementById('fab-add').style.display='none';
 }
 </script>
 </body>
